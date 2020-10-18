@@ -8,11 +8,11 @@ All back end set up was done with Azure App Services following similar instructi
 To run our project follow the instruction under the [run the sample ](https://docs.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=bash&pivots=python-framework-flask#run-the-sample) section in the guide using our repo. 
 
 ### Set up dependencies
-<code>git clone https://github.gatech.edu/jlam61/DVA_Project.git
-cd DVA_Project
-py -3 -m venv .venv
-.venv\scripts\activate 
-pip install -r requirements.txt</code>
+`git clone https://github.gatech.edu/jlam61/DVA_Project.git`
+`cd DVA_Project`
+`py -3 -m venv .venv`
+`.venv\scripts\activate`
+`pip install -r requirements.txt</code>`
 ### Run project locally
 `flask run`
 Open project by visiting http://localhost:5000/
