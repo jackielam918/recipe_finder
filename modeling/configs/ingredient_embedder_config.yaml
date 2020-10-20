@@ -1,0 +1,6 @@
+hyperparameters:
+  output_dim: 300
+  alpha: 0.75
+  x_max: 100
+  init_method: uniform
+  lr: 0.05
