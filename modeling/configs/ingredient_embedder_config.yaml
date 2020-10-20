@@ -4,3 +4,4 @@ hyperparameters:
   x_max: 100
   init_method: uniform
   lr: 0.05
+  epochs: 50

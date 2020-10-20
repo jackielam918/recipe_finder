@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
+from data_munging.data_prep import DataHandler
 
+# https://stackoverflow.com/questions/48962171/how-to-train-glove-algorithm-on-my-own-corpus\
 
 class IngredientEmbedder(nn.Module):
     def __init__(self, input_dim, output_dim, alpha=0.75, x_max=100):
@@ -24,6 +26,17 @@ class IngredientEmbedder(nn.Module):
         self.bi.weight.data.zero_()
         self.bj.weight.data.zero_()
 
+    def fit(self, corpus, batch_size=128, epochs=1, lr=0.05):
+        """
+        :param: corpus: a data to train on
+        :param batch_size: an int
+        :return:
+        """
+        data_handler = DataHandler()
+        data_handler.create_co_occurence_matrix(corpus=corpus)
+        batches = data_handler.gen_batches(batch_size=batch_size)
+
+
     def forward(self, i, j):
         """
         forward pass for the model
@@ -39,6 +52,8 @@ class IngredientEmbedder(nn.Module):
 
         return torch.sum(w_inside * w_outside, dim=1) + b_inside + b_outside
 
+#TODO: move everything but forward pass outside ingredient_embedder class
+
     def weighting_function(self, x):
         """
         a weighting function for scaling the loss
@@ -47,6 +62,9 @@ class IngredientEmbedder(nn.Module):
         :return: a float
         """
         return torch.min(x / self.x_max, 1) ** self.alpha
+
+    def compute_loss(self, y_true, y_pred):
+        return self.weighted_mse_loss(y_true=1+torch.log(y_true), y_pred=y_pred, weight=self.weighting_function(y_true))
 
     @staticmethod
     def weighted_mse_loss(y_true, y_pred, weight):
