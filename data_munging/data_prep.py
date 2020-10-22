@@ -1,6 +1,12 @@
 import pandas as pd
 import numpy as np
 from itertools import permutations
+import scipy.sparse
+from sklearn.utils import shuffle
+import torch
+
+np.random.seed(2020)
+
 
 class DataHandler:
     def __init__(self):
@@ -8,21 +14,29 @@ class DataHandler:
         - creates co-occurence matrix for data
         -
         """
-        self.co_occurence_matrix = None
+        self.co_occurrence_matrix = None
         self.ingredient_mapper = None
+        self.unique_values = None
 
-    def gen_batches(self, batch_size):
+    def create_batches(self, batch_size):
         """
         generates batches for training model
 
         :param batch_size:
         :return:
         """
-        if self.co_occurence_matrix is None:
+        if self.co_occurrence_matrix is None:
             raise NotImplementedError('Must create co-occurrence matrix first')
 
-        return None, None, None
-    def create_co_occurence_matrix(self, corpus):
+        row, col = self.co_occurrence_matrix.nonzero()
+        total_size = self.co_occurrence_matrix.nnz
+        row_rand, col_rand = shuffle(row, col)
+
+        for idx in range(0, total_size, batch_size):
+            i, j = row_rand[idx: idx+batch_size], col_rand[idx: idx+batch_size],
+            yield torch.LongTensor(i), torch.LongTensor(j), torch.FloatTensor(self.co_occurrence_matrix[i, j])
+
+    def create_co_occurrence_matrix(self, corpus):
         """
         :param corpus: a 2-d array, each row is a recipe and each entry is an ingredient id
         :return:
@@ -37,7 +51,8 @@ class DataHandler:
             permutes = list(permutations(ingredient_idxs, 2))
             for m, n in permutes:
                 a[m, n] += 1
-
+        self.co_occurrence_matrix = scipy.sparse.csr_matrix(a)
+        self.unique_values = self.co_occurrence_matrix.shape[0]
 
     def fit_ingredient_mapper(self):
         """
@@ -67,7 +82,8 @@ class IngredientMapper:
         update when DB created using flat file for now
         :return:
         """
-        df = pd.read_pickle('./data/mock_ingredient_table.pkl')
+        # TODO change this to load from db
+        df = pd.read_pickle('/home/jackielam/Documents/OMSA/fall_2020/dva/DVA_Project/data_munging/data/mock_ingredient_table.pkl')
         df.loc[:, 'idx'] = list(range(len(df)))
 
         self.ingredient_count = len(df)
