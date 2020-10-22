@@ -4,6 +4,7 @@ from itertools import permutations
 import scipy.sparse
 from sklearn.utils import shuffle
 import torch
+from tqdm import trange
 
 np.random.seed(2020)
 
@@ -32,7 +33,7 @@ class DataHandler:
         total_size = self.co_occurrence_matrix.nnz
         row_rand, col_rand = shuffle(row, col)
 
-        for idx in range(0, total_size, batch_size):
+        for idx in trange(0, total_size, batch_size):
             i, j = row_rand[idx: idx+batch_size], col_rand[idx: idx+batch_size],
             yield torch.LongTensor(i), torch.LongTensor(j), torch.FloatTensor(self.co_occurrence_matrix[i, j])
 

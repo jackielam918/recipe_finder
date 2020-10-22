@@ -3,7 +3,7 @@ from modeling.ingredient_embeddings import IngredientEmbeddingModel
 from data_munging.data_prep import DataHandler
 import torch.optim as optim
 import numpy as np
-from tqdm import tqdm
+
 
 
 class IngredientEmbedder:
@@ -30,11 +30,11 @@ class IngredientEmbedder:
         save_epoch = True if save_intermediate is not None else False
 
         for epoch in range(1, epochs+1):
-            for row, col, target in tqdm(self.data_handler.create_batches(batch_size=batch_size)):
+            for row, col, target in self.data_handler.create_batches(batch_size=batch_size):
                 row = row.to(self.device)
                 col = col.to(self.device)
                 target = target.to(self.device)
-                optimizer.zero_grad()
+                self.model.zero_grad()
                 x = self.model(row, col)
                 loss = self.compute_loss(y_true=target, y_pred=x)
                 loss.backward()
@@ -77,6 +77,6 @@ class IngredientEmbedder:
         :param weight: a float
         :return:
         """
-        return torch.mean(weight * (y_true - y_pred) ** 2)
+        return torch.sum(weight * (y_pred - y_true) ** 2)
 
 
