@@ -13,9 +13,21 @@ To run our project follow the instruction under the [run the sample ](https://do
 `py -3 -m venv .venv`  
 `.venv\scripts\activate`  
 `pip install -r requirements.txt</code>`  
+
+#### for local DB (I still need to verify and update this)
+Download PostgreSQL and set up local db
+Download the .env file that was given by Oak in Slack into the project directory
+Update the .env file with your local setting
+`flask db upgrade` to migrate local db to project schema
+
+#### for production DB access locally 
+Download the .env file that was given by Oak in Slack into the project directory
+`pip install python-dotenv`
+
 ### Run project locally
 `flask run`  
 Open project by visiting http://localhost:5000/
+
 
 ## Continuous Deployment
 Updates to our master branch will trigger a deployment to https://pamplemousse.azurewebsites.net/ using Azure Pipeline. Our pipeline is located https://dev.azure.com/hnguyen405/pamplemousse/
