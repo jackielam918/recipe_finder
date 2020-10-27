@@ -33,7 +33,9 @@ Open project by visiting http://localhost:5000/
 Updates to our master branch will trigger a deployment to https://pamplemousse.azurewebsites.net/ using Azure Pipeline. Our pipeline is located https://dev.azure.com/hnguyen405/pamplemousse/
 If you'd like access to it, please reach out to Oak. 
 
-
+## Generating SQLAlchemy model.py
+`sqlacodegen postgresql://pamplemousse@dva-pamplemousse:<password>@dva-pamplemousse.postgres.database.azure.com:5432/recipesdb
+`
 
 
 
