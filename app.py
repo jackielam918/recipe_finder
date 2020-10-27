@@ -28,5 +28,5 @@ migrate = Migrate(app, db)
 @app.route('/')
 def home():
     from models import Recipe
-    recipes = Recipe.query.all()
+    recipes = Recipe.query.limit(10)
     return render_template('recipe_list.html', recipes=recipes)
