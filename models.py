@@ -18,45 +18,45 @@ class Cleaningredient(Base):
     recipes = relationship('Recipe', secondary='recipeingredientjoin')
 
 
-t_pg_buffercache = Table(
-    'pg_buffercache', metadata,
-    Column('bufferid', Integer),
-    Column('relfilenode', OID),
-    Column('reltablespace', OID),
-    Column('reldatabase', OID),
-    Column('relforknumber', SmallInteger),
-    Column('relblocknumber', BigInteger),
-    Column('isdirty', Boolean),
-    Column('usagecount', SmallInteger),
-    Column('pinning_backends', Integer)
-)
+    t_pg_buffercache = Table(
+        'pg_buffercache', metadata,
+        Column('bufferid', Integer),
+        Column('relfilenode', OID),
+        Column('reltablespace', OID),
+        Column('reldatabase', OID),
+        Column('relforknumber', SmallInteger),
+        Column('relblocknumber', BigInteger),
+        Column('isdirty', Boolean),
+        Column('usagecount', SmallInteger),
+        Column('pinning_backends', Integer)
+    )
 
-t_pg_stat_statements = Table(
-    'pg_stat_statements', metadata,
-    Column('userid', OID),
-    Column('dbid', OID),
-    Column('queryid', BigInteger),
-    Column('query', Text),
-    Column('calls', BigInteger),
-    Column('total_time', Float(53)),
-    Column('min_time', Float(53)),
-    Column('max_time', Float(53)),
-    Column('mean_time', Float(53)),
-    Column('stddev_time', Float(53)),
-    Column('rows', BigInteger),
-    Column('shared_blks_hit', BigInteger),
-    Column('shared_blks_read', BigInteger),
-    Column('shared_blks_dirtied', BigInteger),
-    Column('shared_blks_written', BigInteger),
-    Column('local_blks_hit', BigInteger),
-    Column('local_blks_read', BigInteger),
-    Column('local_blks_dirtied', BigInteger),
-    Column('local_blks_written', BigInteger),
-    Column('temp_blks_read', BigInteger),
-    Column('temp_blks_written', BigInteger),
-    Column('blk_read_time', Float(53)),
-    Column('blk_write_time', Float(53))
-)
+    t_pg_stat_statements = Table(
+        'pg_stat_statements', metadata,
+        Column('userid', OID),
+        Column('dbid', OID),
+        Column('queryid', BigInteger),
+        Column('query', Text),
+        Column('calls', BigInteger),
+        Column('total_time', Float(53)),
+        Column('min_time', Float(53)),
+        Column('max_time', Float(53)),
+        Column('mean_time', Float(53)),
+        Column('stddev_time', Float(53)),
+        Column('rows', BigInteger),
+        Column('shared_blks_hit', BigInteger),
+        Column('shared_blks_read', BigInteger),
+        Column('shared_blks_dirtied', BigInteger),
+        Column('shared_blks_written', BigInteger),
+        Column('local_blks_hit', BigInteger),
+        Column('local_blks_read', BigInteger),
+        Column('local_blks_dirtied', BigInteger),
+        Column('local_blks_written', BigInteger),
+        Column('temp_blks_read', BigInteger),
+        Column('temp_blks_written', BigInteger),
+        Column('blk_read_time', Float(53)),
+        Column('blk_write_time', Float(53))
+    )
 
 
 class Rawingredient(Base):
