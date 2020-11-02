@@ -4,6 +4,7 @@ from data_munging.data_prep import DataHandler
 import torch.optim as optim
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+import pickle
 
 
 class IngredientEmbedder:
@@ -84,10 +85,10 @@ class IngredientEmbedder:
         """
         return torch.sum(weight * (y_pred - y_true) ** 2)
 
-    def load_model(self, model, data_handler):
-        self.data_handler = data_handler
-        self.ingredient_mapper = data_handler.ingredient_mapper
-        self.model = model
+    def load_model(self, model_path, data_handler_path):
+        self.data_handler = pickle.load(open(data_handler_path, 'rb'))
+        self.ingredient_mapper = self.data_handler.ingredient_mapper
+        self.model = torch.load(model_path)
         self.embeddings = torch.mean(torch.stack([self.model.wi.weight, self.model.wj.weight]), dim=0)
 
 
