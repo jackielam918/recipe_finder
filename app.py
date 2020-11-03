@@ -12,7 +12,7 @@ database_uri = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.forma
     dbname=os.environ['DBNAME']
 )
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='web-app/build/', static_url_path='')
 app.config.update(
     SQLALCHEMY_DATABASE_URI=database_uri,
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
@@ -27,6 +27,4 @@ migrate = Migrate(app, db)
 
 @app.route('/')
 def home():
-    from models import Recipe
-    recipes = Recipe.query.limit(10)
-    return render_template('recipe_list.html', recipes=recipes)
+    return app.send_static_file('index.html')
