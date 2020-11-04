@@ -1,7 +1,6 @@
 import os
 
 from flask import Flask, render_template, request
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
@@ -22,10 +21,6 @@ app.config.update(
 
 # initialize the database connection
 db = SQLAlchemy(app)
-
-# initialize database migration management
-migrate = Migrate(app, db)
-
 
 @app.route('/')
 def home():
