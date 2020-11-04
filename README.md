@@ -11,7 +11,7 @@ To run our project follow the instruction under the [run the sample ](https://do
 `git clone https://github.gatech.edu/dva-pamplemousse/DVA_Project.git`  
 `cd DVA_Project`  
 `py -3 -m venv .venv`  
-`.venv\scripts\activate` (`source .venv/bin/activate` for Mac)
+`.venv\scripts\activate` (`source .venv/bin/activate` for Mac)  
 `pip install -r requirements.txt`  
 
 #### for local DB (I still need to verify and update this)
@@ -25,8 +25,8 @@ Download the .env file that was given by Oak in Slack into the project directory
 `pip install python-dotenv`
 
 ### Build React Web App
-`npm install`
-`npm run build`
+`npm install`  
+`npm run build`  
 
 ### Run project locally
 `flask run`  

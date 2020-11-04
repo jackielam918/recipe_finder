@@ -1,16 +1,59 @@
 import './App.css';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { TextField , Chip, Slider, Button } from '@material-ui/core';
+import { TextField , Chip, Slider, Button, CircularProgress } from '@material-ui/core';
+import debounce from 'lodash.debounce';
 
 function App() {
-  const [options, setOptions] = React.useState([]);
+  const [ingredientSuggestions, setIngredientSuggestions] = React.useState([]);
+  const [searchingIngredients, setSearchingIngredients] = React.useState(false);
+  const [ingredientInputError, setIngredientInputError] = React.useState("");
+  const [selectedIngredients, setSelectedIngredients] = React.useState([]);
   const [sliderValue, setSliderValue] = React.useState(50);
 
   const handleSliderChange = (event, newSliderValue) => {
     setSliderValue(newSliderValue);
   };
+
+  const searchIngredients = useCallback(debounce(function(typedValue) {
+      if (typedValue) {
+        setSearchingIngredients(true);
+
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            setSearchingIngredients(false);
+            resolve(ingredientsList.filter((ingredient) => ingredient.name.toLowerCase().includes(typedValue)));
+          }, 500);
+        })
+        .then((data) => {
+          setIngredientSuggestions(data)
+        })
+        .catch((error) => {
+          setIngredientInputError("An error occurred. Please try again.")
+        })
+      } 
+    }, 500), 
+    []
+  )
+
+  const handleIngredientTyping = (event) => {
+    setSearchingIngredients(false);
+    setIngredientSuggestions([]);
+    setIngredientInputError("");
+    searchIngredients(event.target.value);
+  }
+
+  const searchRecipes = () => {
+    if (selectedIngredients.length < 3) {
+      setIngredientInputError("Please enter at least three ingredients.")
+    } else {
+      // Fetch Recipe results and initiate visualization
+      console.log(selectedIngredients);
+      console.log(sliderValue);
+    }
+    
+  }
 
   return (
     <div className="container">
@@ -20,11 +63,35 @@ function App() {
         <div className="search">
           <Autocomplete 
             multiple
-            options={top100Films}
-            getOptionLabel={(option) => option.name}
+            popupIcon={null}
+            options={ingredientSuggestions}
+            getOptionLabel={(ingredientSuggestion) => ingredientSuggestion.name}
+            open={ingredientSuggestions.length > 0}
+            value={selectedIngredients}
 
+            onChange={(event, newSelectedIngredients) => {
+              setSelectedIngredients(newSelectedIngredients);
+              setIngredientSuggestions([]);
+            }}
+            
             renderInput={(params) => (
-              <TextField {...params} label="Available Ingredients" variant="outlined" />
+              <TextField 
+                {...params} 
+                label="Available Ingredients" 
+                variant="outlined" 
+                onChange={handleIngredientTyping}
+                error={ingredientInputError.length > 0}
+                helperText={ingredientInputError}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {searchingIngredients ? <CircularProgress size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  ),
+                }}
+              />
             )}
 
             renderTags={(tagValue, getTagProps) =>
@@ -44,7 +111,14 @@ function App() {
             <p className="sliderLimitLabel">Experiment</p>
           </div>
 
-          <Button variant="contained" color="primary" size="large">Find Recipes</Button>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            size="large"
+            onClick={searchRecipes}
+          >
+              Find Recipes
+          </Button>
         </div>
         <div class="results"></div>
       </div>
@@ -55,7 +129,7 @@ function App() {
 
 export default App;
 
-const top100Films = [
+const ingredientsList = [
   { name: "Salt", id: 1 },
   { name: "Pepper", id: 2 },
   { name: "Olive oil", id: 3 },
