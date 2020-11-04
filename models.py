@@ -3,8 +3,9 @@ from sqlalchemy import ARRAY, BigInteger, Boolean, Column, Date, Float, ForeignK
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import OID
 from sqlalchemy.ext.declarative import declarative_base
+from app import db
 
-Base = declarative_base()
+Base = db.Model
 metadata = Base.metadata
 
 
