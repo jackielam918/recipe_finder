@@ -1,0 +1,38 @@
+[
+   {
+      "id":1,
+      "name":"Recipe 1",
+      "difficulty":"Easy",
+      "numberOfSubstitutions":1,
+      "ingredients":[
+         {
+            "name":"ingredient1",
+            "substitutedFor":""
+         },
+         {
+            "name":"ingredient2",
+            "substitutedFor":"ingredient9"
+         },
+         {
+            "name":"ingredient3",
+            "substitutedFor":""
+         },
+         {
+            "name":"ingredient7",
+            "substitutedFor":""
+         }
+      ],
+      "instructions":[
+         "Step 1",
+         "Step 2",
+         "Step 3"
+      ],
+      "similarRecipeIds":[
+         2,
+         3,
+         7,
+         8,
+         15
+      ]
+   }
+]

@@ -25,6 +25,7 @@ Download the .env file that was given by Oak in Slack into the project directory
 `pip install python-dotenv`
 
 ### Build React Web App
+`cd web-app`  
 `npm install`  
 `npm run build`  
 
