@@ -3,8 +3,10 @@ import os
 from flask import Flask, render_template, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+from flask import jsonify
 
-
+load_dotenv('environment/.env')
 database_uri = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
     dbuser=os.environ['DBUSER'],
     dbpass=os.environ['DBPASS'],
@@ -27,6 +29,12 @@ migrate = Migrate(app, db)
 
 @app.route('/')
 def home():
-    from models import Recipe
-    recipes = Recipe.query.limit(10)
-    return render_template('recipe_list.html', recipes=recipes)
+    return 'pamplemouse'
+
+
+@app.route('/ingredient', methods=['POST'])
+def hello():
+    data = request.get_json()
+    ret = {data.get('ingredient'): [1, 2, 3]}
+    return jsonify(ret)
+

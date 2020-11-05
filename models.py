@@ -1,4 +1,4 @@
-from app import db
+from backend.app import db
 
 
 class Recipe(db.Model):

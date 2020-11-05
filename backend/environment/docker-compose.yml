@@ -1,0 +1,19 @@
+version: '3.2'
+
+services:
+  backend:
+    container_name: flask-app
+    image: "pamplemousse-backend"
+    volumes:
+      - "..:/home/backend"
+    env_file:
+      - ./.env
+    environment:
+      - FLASK_APP=/home/backend/app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    ports:
+      - "5000:5000"
+    command:
+      flask run
