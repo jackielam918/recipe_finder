@@ -3,10 +3,8 @@ import os
 from flask import Flask, render_template, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
 
 
-load_dotenv('environment/.env')
 database_uri = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
     dbuser=os.environ['DBUSER'],
     dbpass=os.environ['DBPASS'],
