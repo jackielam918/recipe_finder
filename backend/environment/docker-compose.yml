@@ -9,7 +9,7 @@ services:
     env_file:
       - ./.env
     environment:
-      - FLASK_APP=/home/backend/app.py
+      - FLASK_APP=/home/backend/routes.py
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_ENV=development
       - FLASK_DEBUG=1

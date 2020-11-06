@@ -3,12 +3,15 @@ from sqlalchemy import ARRAY, BigInteger, Boolean, Column, Date, Float, ForeignK
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import OID
 from sqlalchemy.ext.declarative import declarative_base
+from dataclasses import dataclass
 from app import db
+
 
 Base = db.Model
 metadata = Base.metadata
 
 
+@dataclass
 class Cleaningredient(Base):
     __tablename__ = 'cleaningredients'
 
