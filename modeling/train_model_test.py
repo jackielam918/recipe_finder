@@ -1,4 +1,4 @@
-from modeling.model_training import IngredientEmbedder
+from modeling.model_trainer import IngredientEmbedder
 from data_munging.data_prep import DataHandler
 import pandas as pd
 from sklearn.manifold import TSNE

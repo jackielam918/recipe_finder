@@ -5,7 +5,9 @@ import scipy.sparse
 from sklearn.utils import shuffle
 import torch
 from tqdm import trange
-import pickle
+from dotenv import load_dotenv
+import psycopg2
+import os
 
 np.random.seed(2020)
 
@@ -38,7 +40,7 @@ class DataHandler:
             i, j = row_rand[idx: idx+batch_size], col_rand[idx: idx+batch_size],
             yield torch.LongTensor(i), torch.LongTensor(j), torch.FloatTensor(self.co_occurrence_matrix[i, j])
 
-    def create_co_occurrence_matrix(self, corpus):
+    def create_co_occurrence_matrix(self, corpus=None):
         """
         :param corpus: a 2-d array, each row is a recipe and each entry is an ingredient id
         :return:
@@ -46,8 +48,12 @@ class DataHandler:
         if self.ingredient_mapper is None:
             self.fit_ingredient_mapper()
 
+        if corpus is None:
+            corpus = self.load_default_corpus()
+
         n = self.ingredient_mapper.ingredient_count
         a = np.zeros((n, n))
+
         for recipe in corpus:
             ingredient_idxs = self.ingredient_mapper.recipe_to_idxs(recipe)
             permutes = list(permutations(ingredient_idxs, 2))
@@ -55,6 +61,7 @@ class DataHandler:
                 a[m, n] += 1
         self.co_occurrence_matrix = scipy.sparse.csr_matrix(a)
         self.unique_values = self.co_occurrence_matrix.shape[0]
+        print('co-occurrence matrix created')
 
     def fit_ingredient_mapper(self):
         """
@@ -63,6 +70,21 @@ class DataHandler:
         ingredient_mapper = IngredientMapper()
         ingredient_mapper.fit()
         self.ingredient_mapper = ingredient_mapper
+
+    @staticmethod
+    def load_default_corpus():
+        load_dotenv('../data_munging/.env')
+        conn = psycopg2.connect(
+            host=os.environ['DBHOST'],
+            database=os.environ['DBNAME'],
+            user=os.environ['DBUSER'],
+            password=os.environ['DBPASS']
+        )
+        with open('../data_munging/sql/load_recipes.sql', 'r') as query:
+            corpus = pd.read_sql(query.read(), conn)
+        conn.close()
+        corpus = corpus['recipe']
+        return corpus
 
 
 class IngredientMapper:
@@ -85,7 +107,16 @@ class IngredientMapper:
         :return:
         """
         # TODO change this to load from db
-        df = pd.read_pickle('/home/jackielam/Documents/OMSA/fall_2020/dva/DVA_Project/data_munging/data/mock_ingredient_table.pkl')
+        load_dotenv('../data_munging/.env')
+        conn = psycopg2.connect(
+                    host=os.environ['DBHOST'],
+                    database=os.environ['DBNAME'],
+                    user=os.environ['DBUSER'],
+                    password=os.environ['DBPASS']
+        )
+        with open('../data_munging/sql/load_ingredients.sql', 'r') as query:
+            df = pd.read_sql(query.read(), conn)
+        conn.close()
         df.loc[:, 'idx'] = list(range(len(df)))
 
         self.ingredient_count = len(df)
