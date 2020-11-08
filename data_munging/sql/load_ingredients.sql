@@ -1,0 +1,2 @@
+select cleaningredientid ingredient_id, name
+from cleaningredients
