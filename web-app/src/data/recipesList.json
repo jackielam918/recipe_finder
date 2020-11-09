@@ -34,5 +34,39 @@
          8,
          15
       ]
+   },
+   {
+      "id":2,
+      "name":"Recipe 2",
+      "difficulty":"Hard",
+      "numberOfSubstitutions":3,
+      "ingredients":[
+         {
+            "name":"ingredient1",
+            "substitutedFor":""
+         },
+         {
+            "name":"ingredient2",
+            "substitutedFor":"ingredient9"
+         },
+         {
+            "name":"ingredient3",
+            "substitutedFor":""
+         },
+         {
+            "name":"ingredient7",
+            "substitutedFor":""
+         }
+      ],
+      "instructions":[
+         "Step 1",
+         "Step 2",
+         "Step 3"
+      ],
+      "similarRecipeIds":[
+         1,
+         3,
+         7
+      ]
    }
 ]

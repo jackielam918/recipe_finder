@@ -6,9 +6,10 @@ import { TextField , Chip, Slider, Button, CircularProgress } from '@material-ui
 import debounce from 'lodash.debounce';
 
 //Data
-import ingredientsList from './data/ingredientsList.json'
+import ingredientsList from './data/ingredientsList.json';
+import recipesList from './data/recipesList.json';
 
-
+import RecipesGraph from './RecipesGraph';
 
 function App() {
   const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
@@ -16,6 +17,7 @@ function App() {
   const [ingredientInputError, setIngredientInputError] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [sliderValue, setSliderValue] = useState(50);
+  const [searchedRecipes, setRecipes] = useState([]);
 
   const handleSliderChange = (event, newSliderValue) => {
     setSliderValue(newSliderValue);
@@ -33,6 +35,9 @@ function App() {
         })
         .then((data) => {
           setIngredientSuggestions(data)
+          if (data.length < 1) {
+            setIngredientInputError(`'${typedValue} is not a known ingredient. Please try again`);
+          }
         })
         .catch((error) => {
           setIngredientInputError("An error occurred. Please try again.")
@@ -50,13 +55,25 @@ function App() {
   }
 
   const searchRecipes = () => {
-    if (selectedIngredients.length < 3) {
-      setIngredientInputError("Please enter at least three ingredients.")
-    } else {
+    // if (selectedIngredients.length < 3) {
+    //   setIngredientInputError("Please enter at least three ingredients.")
+    // } else {
       // Fetch Recipe results and initiate visualization
       console.log(selectedIngredients);
       console.log(sliderValue);
-    }
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(searchedRecipes);
+        }, 500);
+      })
+      .then((data) => {
+        // graph payload (with minimalist structure)
+        setRecipes(data)
+      })
+      .catch((error) => {
+        setIngredientInputError("An error occurred. Please try again.")
+      })
+    //}
     
   }
 
@@ -124,7 +141,7 @@ function App() {
               Find Recipes
           </Button>
         </div>
-        <div class="results"></div>
+        <RecipesGraph data={recipesList}/>
       </div>
       
     </div>
