@@ -5,11 +5,11 @@ services:
     container_name: flask-app
     image: "pamplemousse-backend"
     volumes:
-      - "..:/home/backend"
+      - "../..:/home/DVA_project"
     env_file:
       - ./.env
     environment:
-      - FLASK_APP=/home/backend/routes.py
+      - FLASK_APP=/home/DVA_project/backend/routes.py
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_ENV=development
       - FLASK_DEBUG=1

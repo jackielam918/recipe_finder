@@ -2,10 +2,9 @@ from modeling.model_trainer import IngredientEmbedder
 from data_munging.data_prep import DataHandler
 import pandas as pd
 from sklearn.manifold import TSNE
-import numpy as np
 import matplotlib.pyplot as plt
 
-corpus = pd.read_pickle('/home/jackielam/Documents/OMSA/fall_2020/dva/DVA_Project/data_munging/data/recipe_data.pkl')
+corpus = pd.read_pickle('/data_munging/data/recipe_data.pkl')
 
 corpus = corpus
 data_handler = DataHandler()

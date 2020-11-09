@@ -1,17 +1,18 @@
 from models import Cleaningredient
 from app import app
-from flask import jsonify, request
+from flask import request, jsonify
 import json
+from modeling.ingredient_embedder import IngredientEmbedderWrapper
+import numpy as np
+
+
+model_path = '/home/DVA_project/backend/modeling/outputs/07011120'
+model = IngredientEmbedderWrapper(model_path)
 
 
 @app.route('/')
 def home():
-    return 'pamplemouse'
-
-
-@app.route('/api/hello', methods=['POST'])
-def hello():
-    return 'hello'
+    return '<h1>pamplemouse</h1?'
 
 
 @app.route('/api/get-ingredients', methods=['GET'])
@@ -31,5 +32,9 @@ def search_ingredients():
 @app.route('/api/get-recipes', methods=['POST'])
 def get_recipes():
     data = request.get_json()
-    ingredients = data['ingredients']
     scale = data['scale']
+    ingredients = data['ingredients']
+    embedding = np.array2string(model.query_recipe(ingredients))
+    return jsonify({'embedding': embedding})
+
+

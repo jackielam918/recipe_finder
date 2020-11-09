@@ -36,7 +36,7 @@ class IngredientEmbedderWrapper:
         :return:
         """
         embedding = self.query_ingredient(ingredient)
-        scores = cosine_similarity(embedding.reshape(1, -1), self.embeddings.cpu().detach().numpy())
+        scores = cosine_similarity(embedding.reshape(1, -1), self.embeddings)
         sorted_scores = -np.sort(-scores).flatten()[1: 1+n]
         sorted_idxs = np.argsort(-scores).flatten()[1: 1+n]
         return [(self.ingredient_mapper.idx_to_name[idx], s) for s, idx in zip(sorted_scores, sorted_idxs)]
@@ -48,13 +48,13 @@ class IngredientEmbedderWrapper:
         :return:
         """
         idx = self.ingredient_mapper.name_to_idx[ingredient]
-        return self.embeddings[idx].cpu().detach().numpy()
+        return self.embeddings[idx]
 
     def query_recipe(self, recipe):
         """
         :param recipe:
         :return:
         """
-        return np.mean([self.query_ingredient(ingredient) for ingredient in recipe], axis=1)
+        return np.mean([self.query_ingredient(ingredient) for ingredient in recipe], axis=0)
 
 

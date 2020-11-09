@@ -1,6 +1,8 @@
 from modeling.model_trainer import IngredientEmbedder
 from data_munging.data_prep import DataHandler
 
+def main():
+    train_model()
 
 def train_model(alpha=0.75, output_dim=50, x_max=100, epochs=100, lr=0.5, batch_size=4096, corpus=None):
     data_handler = DataHandler()

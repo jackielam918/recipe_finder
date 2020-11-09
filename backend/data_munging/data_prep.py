@@ -73,14 +73,14 @@ class DataHandler:
 
     @staticmethod
     def load_default_corpus():
-        load_dotenv('../data_munging/.env')
+        load_dotenv('.env')
         conn = psycopg2.connect(
             host=os.environ['DBHOST'],
             database=os.environ['DBNAME'],
             user=os.environ['DBUSER'],
             password=os.environ['DBPASS']
         )
-        with open('../data_munging/sql/load_recipes.sql', 'r') as query:
+        with open('sql/load_recipes.sql', 'r') as query:
             corpus = pd.read_sql(query.read(), conn)
         conn.close()
         corpus = corpus['recipe']
@@ -107,14 +107,14 @@ class IngredientMapper:
         :return:
         """
         # TODO change this to load from db
-        load_dotenv('../data_munging/.env')
+        load_dotenv('.env')
         conn = psycopg2.connect(
                     host=os.environ['DBHOST'],
                     database=os.environ['DBNAME'],
                     user=os.environ['DBUSER'],
                     password=os.environ['DBPASS']
         )
-        with open('../data_munging/sql/load_ingredients.sql', 'r') as query:
+        with open('sql/load_ingredients.sql', 'r') as query:
             df = pd.read_sql(query.read(), conn)
         conn.close()
         df.loc[:, 'idx'] = list(range(len(df)))
