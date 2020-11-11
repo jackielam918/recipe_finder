@@ -1,0 +1,13 @@
+# Instructions to format the data and put it in the database
+
+1. Download the full dataset from:
+    https://www.kaggle.com/shuyangli94/food-com-recipes-and-user-interactions?select=RAW_recipes.csv
+2. Unzip and place all files in the ./Recipe Data folder
+3. Run all code in the first Jupyter Notebook.  Cleaned data files will appear in the ./Clean Recipe Data folder
+4. Complete manual clean-up of ingredient names
+    a. Make a copy of the cleaningredients.csv file and name is cleaningredients_v2.csv
+    b. Add a column called "groupings" and put new, clean names for each ingredient in it
+5. Run all cells in the second Jupyter Notebook
+6. Upload the data to the database
+    a. Create a blank database
+    b. Enter credentials for the database at the top of the third Jupyer Notebook and run all cells
