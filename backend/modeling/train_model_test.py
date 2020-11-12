@@ -1,3 +1,4 @@
+# OLD CODE
 from modeling.model_trainer import IngredientEmbedder
 from data_munging.data_prep import DataHandler
 import pandas as pd
