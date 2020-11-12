@@ -1,0 +1,48 @@
+.results {
+  border-width: 2px;
+  border-style: solid;
+  border-color: #3f51b5;
+  border-radius: 4px;
+}
+
+.recipesEmptyStateContainer {
+  fill: #3f51b51e;
+}
+
+.recipesEmptyStateText {
+  dominant-baseline: central;
+  text-anchor: middle;
+  font-size: 24px;
+}
+
+.recipeNode {
+  stroke-width: 5px;
+}
+
+.legendRecipeNode {
+  stroke-width: 4px;
+  fill: white;
+}
+
+.links {
+  stroke: #bdbdbd;
+  stroke-width: 2px;
+}
+
+.recipeName {
+  color: black;
+}
+
+.recipeOuterCircle {
+  fill: black;
+}
+
+.legendText {
+  dominant-baseline: central;
+  font-size: 12px;
+}
+
+.legendLine {
+  stroke: black;
+  stroke-width: 0.5px;
+}

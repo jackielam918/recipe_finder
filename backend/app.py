@@ -24,5 +24,5 @@ db = SQLAlchemy(app)
 # initialize database migration management
 migrate = Migrate(app, db)
 
-# load the ingredient embedding model
 
+@app.route('/')
