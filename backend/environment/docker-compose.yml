@@ -22,6 +22,8 @@ services:
     image: "pamplemousse-frontend"
     ports:
       - "3000:3000"
+    volumes:
+      - "../../web-app/src:/home/web-app/src"
     command:
       npm start
     depends_on:
