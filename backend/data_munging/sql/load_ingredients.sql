@@ -1,2 +1,3 @@
-select cleaningredientid ingredient_id, name
-from cleaningredients
+select ingredientid ingredient_id, name
+from ingredients
+

@@ -6,13 +6,13 @@ from modeling.ingredient_embedder import IngredientEmbedderWrapper
 import numpy as np
 
 
-model_path = '/home/DVA_project/backend/modeling/outputs/07011120'
+model_path = '/home/DVA_project/backend/modeling/outputs/11411120'
 model = IngredientEmbedderWrapper(model_path)
 
 
 @app.route('/')
 def home():
-    return '<h1>pamplemouse</h1?'
+    return '<h1>pamplemouse</h1>'
 
 
 @app.route('/api/get-ingredients', methods=['GET'])
@@ -34,7 +34,6 @@ def get_recipes():
     data = request.get_json()
     scale = data['scale']
     ingredients = data['ingredients']
-    embedding = np.array2string(model.query_recipe(ingredients))
-    return jsonify({'embedding': embedding})
-
+    limit = data.get('limit')
+    return json.dumps(model.most_similar_recipe(recipe=ingredients, scale=scale, limit=limit))
 
