@@ -63,10 +63,8 @@ function App() {
   const searchRecipes = () => {
     if (selectedIngredients.length < 3) {
       setIngredientInputError("Please enter at least three ingredients.")
-      fetch("http://localhost:5000/api/get-ingredients", {method:'GET'})
-      .then(response => {
-        return response; 
-      })
+      fetch("/api/get-ingredients", {method:'GET', mode: "no-cors"})
+      .then(res => res.json())
       .then(jsonData => {
         console.log(jsonData);
       })
