@@ -12,7 +12,6 @@ import RecipesGraph from './RecipesGraph.js'
 import ingredientsList from './data/ingredientsList.json'
 import recipesList from './data/recipesList.json'
 
-
 function App() {
   const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
   const [searchingIngredients, setSearchingIngredients] = useState(false);
@@ -64,12 +63,23 @@ function App() {
   const searchRecipes = () => {
     if (selectedIngredients.length < 3) {
       setIngredientInputError("Please enter at least three ingredients.")
+      fetch("http://localhost:5000/api/get-ingredients", {method:'GET'})
+      .then(response => {
+        return response; 
+      })
+      .then(jsonData => {
+        console.log(jsonData);
+      })
+      .catch(err => {
+        console.log(err)
+      });
     } else {
       // Fetch Recipe results and initiate visualization
       console.log(selectedIngredients);
       console.log(sliderValue);
 
       setSearchingRecipes(true);
+
 
       new Promise((resolve, reject) => {
         setTimeout(() => {
