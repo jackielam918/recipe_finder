@@ -1,0 +1,5 @@
+output_dim: 300
+alpha: 0.75
+x_max: 100
+lr: 0.05
+epochs: 50
