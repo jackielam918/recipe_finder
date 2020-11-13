@@ -25,7 +25,7 @@ def get_ingredients():
 def search_ingredients():
     data = request.get_json()
     substring = data['ingredient']
-    results = Cleaningredient.query.filter(Cleaningredient.name.like(f'{substring}%')).all()
+    results = Cleaningredient.query.filter(Cleaningredient.name.like(f'%{substring}%')).limit(100).all()
     return json.dumps([{'id': result.cleaningredientid, 'name': result.name} for result in results])
 
 
@@ -37,3 +37,10 @@ def get_recipes():
     limit = data.get('limit')
     return json.dumps(model.most_similar_recipe(recipe=ingredients, scale=scale, limit=limit))
 
+
+@app.route('/api/substitute-ingredients', methods=['POST'])
+def get_substitute_ingredients():
+    data = request.get_json()
+    ingredients = data['ingredients']
+    recipe = data['recipe']
+    return json.dumps(model.get_substitute_ingredients(ingredients, recipe))

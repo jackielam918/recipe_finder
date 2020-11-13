@@ -17,14 +17,14 @@ services:
       - "5000:5000"
     command:
       flask run
-  frontend:
-    container_name: react-app
-    image: "pamplemousse-frontend"
-    ports:
-      - "3000:3000"
-    volumes:
-      - "../../web-app/src:/home/web-app/src"
-    command:
-      npm start
-    depends_on:
-      - backend
+#  frontend:
+#    container_name: react-app
+#    image: "pamplemousse-frontend"
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - "../../web-app/src:/home/web-app/src"
+#    command:
+#      npm start
+#    depends_on:
+#      - backend
