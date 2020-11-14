@@ -5,7 +5,7 @@ import torch
 from sklearn.metrics.pairwise import cosine_similarity
 from data_munging.data_prep import DataHandler
 import os
-
+import sys
 
 class IngredientEmbedderWrapper:
     def __init__(self, directory):
@@ -69,8 +69,12 @@ class IngredientEmbedderWrapper:
         :param ingredient_id:
         :return:
         """
-        idx = self.ingredient_mapper.id_to_idx[ingredient_id]
-        return self.embeddings[idx]
+        if ingredient_id not in self.ingredient_mapper.id_to_idx:
+            print(f'Ingredient {ingredient_id} not in ingredient mapper', file=sys.stderr)
+            return None
+        else:
+            idx = self.ingredient_mapper.id_to_idx[ingredient_id]
+            return self.embeddings[idx]
 
     def query_recipe(self, recipe, method='id'):
         """

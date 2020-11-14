@@ -12,13 +12,13 @@ metadata = Base.metadata
 
 
 @dataclass
-class Cleaningredient(Base):
-    __tablename__ = 'cleaningredients'
+class Ingredient(Base):
+    __tablename__ = 'ingredients'
 
-    cleaningredientid = Column(Integer, primary_key=True)
+    ingredientid = Column(Integer, primary_key=True)
     name = Column(String(255))
 
-    recipes = relationship('Recipe', secondary='recipeingredientjoin')
+    #recipes = relationship('Recipe', secondary='recipeingredientjoin')
 
 
 t_pg_buffercache = Table(

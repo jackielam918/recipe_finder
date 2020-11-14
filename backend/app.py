@@ -12,14 +12,14 @@ database_uri = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.forma
     dbname=os.environ['DBNAME']
 )
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../web-app/build', static_url_path='/')
 app.config.update(
     SQLALCHEMY_DATABASE_URI=database_uri,
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
 )
 
 # initialize the database connection
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)  
 
 # initialize database migration management
 migrate = Migrate(app, db)

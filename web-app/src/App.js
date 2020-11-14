@@ -9,10 +9,9 @@ import debounce from 'lodash.debounce';
 import RecipesGraph from './RecipesGraph.js'
 
 //Data
-import ingredientsList from './data/ingredientsList.json'
 import recipesList from './data/recipesList.json'
 
-function App() {
+function App(props) {
   const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
   const [searchingIngredients, setSearchingIngredients] = useState(false);
   const [ingredientInputError, setIngredientInputError] = useState("");
@@ -32,24 +31,14 @@ function App() {
     }
   }));
 
-  const searchIngredients = useCallback(debounce(function(typedValue) {
+  const searchIngredients = useCallback(function(typedValue) {
       if (typedValue) {
         setSearchingIngredients(true);
-
-        new Promise((resolve, reject) => {
-          setTimeout(() => {
-            setSearchingIngredients(false);
-            resolve(ingredientsList.filter((ingredient) => ingredient.name.toLowerCase().includes(typedValue)));
-          }, 500);
-        })
-        .then((data) => {
-          setIngredientSuggestions(data)
-        })
-        .catch((error) => {
-          setIngredientInputError("An error occurred. Please try again.")
-        })
+        var filteredIngredients = props.ingredients.filter((ingredient) => ingredient.name.toLowerCase().includes(typedValue));
+        setIngredientSuggestions(filteredIngredients);
+        setSearchingIngredients(false);
       } 
-    }, 500), 
+    }, 
     []
   )
 
@@ -63,22 +52,22 @@ function App() {
   const searchRecipes = () => {
     if (selectedIngredients.length < 3) {
       setIngredientInputError("Please enter at least three ingredients.")
-      fetch("/api/get-ingredients", {method:'GET', mode: "no-cors"})
-      .then(res => res.json())
-      .then(jsonData => {
-        console.log(jsonData);
-      })
-      .catch(err => {
-        console.log(err)
-      });
     } else {
       // Fetch Recipe results and initiate visualization
       console.log(selectedIngredients);
       console.log(sliderValue);
 
       setSearchingRecipes(true);
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scale: sliderValue, ingredients:  selectedIngredients.map(c => c.id), limit: 2})
+      };
 
-
+      fetch('/api/get-recipes', requestOptions)
+      .then(res => res.json())
+      .then(json => console.log(json));
+      
       new Promise((resolve, reject) => {
         setTimeout(() => {
           setSearchingRecipes(false);
