@@ -1,8 +1,16 @@
 import './RecipesGraph.css';
 
 import { useEffect, useRef } from 'react';
-import * as d3 from 'd3';
-import SearchIcon from '@material-ui/icons/Search';
+// import * as d3 from 'd3';
+// import d3tip from 'd3-tip';
+
+import * as d3module from 'd3'
+import d3tip from 'd3-tip'
+const d3 = {
+  ...d3module,
+  tip: d3tip
+}
+
 
 function RecipesGraph({ width, height, recipes }) {
     const svgRef = useRef();
@@ -30,8 +38,6 @@ function RecipesGraph({ width, height, recipes }) {
                 .attr("class", "recipesEmptyStateText")
                 .attr("x", width / 2)
                 .attr("y", height / 2)
-            
-            svg.append("SearchIcon")
 
             return;
         }
@@ -95,6 +101,41 @@ function RecipesGraph({ width, height, recipes }) {
         
         var g = svg.append("g");
 
+        var tooltip = d3.tip()
+                            .attr('class', 'recipeDetails')
+                            .direction('s')
+                            .html(function(d) { 
+                                var html = "";
+                                html += "<div class=\"recipeDetailsTitle\"> <p class=\"recipeDetailsLabel\">" + d.name + "</p> </div>"; 
+                                html += "<div class=\"recipeDetailsContent\">";
+                                
+                                html += "<div class=\"recipeDetailsRow\"> <div class=\"recipeDetailsDifSubs\">";
+                                html += "<svg width=\"20\" height=\"20\"><circle r=\"10\" fill=\"" + difficultyColors[d.difficulty] + "\" cx=\"10\" cy=\"10\"></circle></svg>"
+                                html += "<p>" + d.difficulty + "</p>"
+                                html += "<svg width=\"25\" height=\"20\"><circle class=\"recipeNode\" r=\"7.5\" fill=\"white\" stroke=\"" + substitutionScale(d.numberOfSubstitutions) + "\" cx=\"15\" cy=\"10\"></circle></svg>"
+                                html += "<p>" + d.numberOfSubstitutions.toString() + " substitution" + (d.numberOfSubstitutions > 1 ? "s" : "") + "</p>"
+                                html += "</div> </div>";
+
+                                html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Ingredients:</p> </div>";
+                                html += "<div class=\"recipeDetailsRow\"> <ul>";
+                                d.ingredients.forEach(ingredient => {
+                                    html += "<li>" + ingredient.name + "</li>";
+                                })
+                                html += "</ul> </div>";
+
+                                html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Instructions:</p> </div>";
+                                html += "<div class=\"recipeDetailsRow\"> <ul>";
+                                d.instructions.forEach(instruction => {
+                                    html += "<li>" + instruction + "</li>";
+                                })
+                                html += "</ul> </div>";
+
+                                html += "</div>";
+                                return html;
+                            });
+
+        g.call(tooltip);
+
         var force = d3.forceSimulation()
             .nodes(recipes)
             .force("link", d3.forceLink(links).id(d => d.id).distance(125))
@@ -116,6 +157,9 @@ function RecipesGraph({ width, height, recipes }) {
             .data(force.nodes())
             .enter().append("g")
             .attr("class", "node")
+            .on("click", function(event, d) {
+                tooltip.show(d, this);
+            })
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
@@ -225,6 +269,7 @@ function RecipesGraph({ width, height, recipes }) {
         function zoom_actions(event){
             g.attr("transform", event.transform)
         }
+
     }
 
     return (
