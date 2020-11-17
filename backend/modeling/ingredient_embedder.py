@@ -119,7 +119,7 @@ class IngredientEmbedderWrapper:
             lambda x: [self.ingredient_mapper.id_to_name[i] for i in x])
 
         columns = ['recipeid', 'name', 'minutes', 'ingredient_list', 'recipe', 'similarity', 'similar_recipe_ids',
-                   'recipe_difference']
+                   'recipe_difference', 'stepslist']
         ret_dict = filtered_recipes_limit.loc[:, columns].head(limit).to_dict('recipeid')
         return ret_dict
 

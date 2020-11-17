@@ -76,7 +76,7 @@ class DataHandler:
     @staticmethod
     def load_default_corpus(full_data=False):
         parent_path = pathlib.Path(__file__).parent.absolute()
-        load_dotenv(os.path.join('../data_munging/.env'))
+        load_dotenv(os.path.join(parent_path, '.env'))
         conn = psycopg2.connect(
             host=os.environ['DBHOST'],
             database=os.environ['DBNAME'],

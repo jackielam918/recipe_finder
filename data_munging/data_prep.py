@@ -8,6 +8,8 @@ from tqdm import trange
 from dotenv import load_dotenv
 import psycopg2
 import os
+import pathlib
+
 
 np.random.seed(2020)
 
@@ -25,7 +27,6 @@ class DataHandler:
     def create_batches(self, batch_size):
         """
         generates batches for training model
-
         :param batch_size:
         :return:
         """
@@ -72,18 +73,20 @@ class DataHandler:
         self.ingredient_mapper = ingredient_mapper
 
     @staticmethod
-    def load_default_corpus():
-        load_dotenv('../data_munging/.env')
+    def load_default_corpus(full_data=False):
+        parent_path = pathlib.Path(__file__).parent.absolute()
+        load_dotenv(os.path.join('../data_munging/.env'))
         conn = psycopg2.connect(
             host=os.environ['DBHOST'],
             database=os.environ['DBNAME'],
             user=os.environ['DBUSER'],
             password=os.environ['DBPASS']
         )
-        with open('../data_munging/sql/load_recipes.sql', 'r') as query:
+        with open(os.path.join(parent_path, 'sql/load_full_recipe_data.sql'), 'r') as query:
             corpus = pd.read_sql(query.read(), conn)
         conn.close()
-        corpus = corpus['recipe']
+        if full_data is False:
+            corpus = corpus['recipe']
         return corpus
 
 
@@ -106,7 +109,6 @@ class IngredientMapper:
         update when DB created using flat file for now
         :return:
         """
-        # TODO change this to load from db
         load_dotenv('../data_munging/.env')
         conn = psycopg2.connect(
                     host=os.environ['DBHOST'],
@@ -139,5 +141,3 @@ class IngredientMapper:
         if self.fitted is False:
             raise NotImplementedError('Mapper is not fitted')
         return [self.id_to_idx[i] for i in recipe]
-
-
