@@ -50,7 +50,9 @@ function RecipesGraph({ width, height, recipes }) {
 
         recipes = recipes.map(recipe => {
             var numberOfSimilarRecipes = 0;
-            recipe["numberOfSimilarRecipes"] = numberOfSimilarRecipes = recipe["similarRecipeIds"].length;
+            recipe["numberOfSimilarRecipes"] = numberOfSimilarRecipes = recipe["similar_recipe_ids"].length;
+            recipe["difficulty"] = recipe["minutes"] < 30 ? "Easy" : recipe["minutes"] < 90 ? "Medium" : "Hard";
+            recipe["numberOfSubstitutions"] = recipe["recipe_difference"].length;
             if (maxDegree < numberOfSimilarRecipes) {
                 maxDegree = numberOfSimilarRecipes;
             }
@@ -59,23 +61,23 @@ function RecipesGraph({ width, height, recipes }) {
                 minDegree = numberOfSimilarRecipes;
             }
 
-            if (!linksDict[recipe["id"]]) {
-                linksDict[recipe["id"]] = {};
+            if (!linksDict[recipe["recipeid"]]) {
+                linksDict[recipe["recipeid"]] = {};
             }
 
-            recipe["similarRecipeIds"].forEach(similarRecipeId => {
-                if (!linksDict[recipe["id"]][similarRecipeId] &&
-                    !(linksDict[similarRecipeId] && linksDict[similarRecipeId][recipe["id"]])) {
-                        linksDict[recipe["id"]][similarRecipeId] = 1;
+            recipe["similar_recipe_ids"].forEach(similarRecipeId => {
+                if (!linksDict[recipe["recipeid"]][similarRecipeId] &&
+                    !(linksDict[similarRecipeId] && linksDict[similarRecipeId][recipe["recipeid"]])) {
+                        linksDict[recipe["recipeid"]][similarRecipeId] = 1;
                         links.push({
-                            "source": recipe["id"],
+                            "source": recipe["recipeid"],
                             "target": similarRecipeId
                         });
                     }
             });
 
-            if (maxSubstitutions < recipe["numberOfSubstitutions"]) {
-                maxSubstitutions = recipe["numberOfSubstitutions"];
+            if (maxSubstitutions < recipe["recipe_difference"].length) {
+                maxSubstitutions = recipe["recipe_difference"].length;
             }
 
             return recipe;
@@ -118,8 +120,8 @@ function RecipesGraph({ width, height, recipes }) {
 
                                 html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Ingredients:</p> </div>";
                                 html += "<div class=\"recipeDetailsRow\"> <ul>";
-                                d.ingredients.forEach(ingredient => {
-                                    html += "<li>" + ingredient.name + "</li>";
+                                d.ingredient_list.forEach(ingredient => {
+                                    html += "<li>" + ingredient + "</li>";
                                 })
                                 html += "</ul> </div>";
 
@@ -138,7 +140,7 @@ function RecipesGraph({ width, height, recipes }) {
 
         var force = d3.forceSimulation()
             .nodes(recipes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(125))
+            .force("link", d3.forceLink(links).id(d => d.recipeid).distance(125))
             .force('center', d3.forceCenter((width - margin.right) / 2, height / 2))
             .force("charge", d3.forceManyBody().strength(-500))
             .force("x", d3.forceX())
@@ -158,7 +160,14 @@ function RecipesGraph({ width, height, recipes }) {
             .enter().append("g")
             .attr("class", "node")
             .on("click", function(event, d) {
-                tooltip.show(d, this);
+                if (d.istooltipshowing){
+                    tooltip.hide(d, this);
+                    d.istooltipshowing = false
+                } else {
+                    tooltip.show(d, this);
+                    d.istooltipshowing = true
+                } 
+
             })
             .call(d3.drag()
                 .on("start", dragstarted)

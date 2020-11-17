@@ -66,16 +66,10 @@ function App(props) {
 
       fetch('/api/get-recipes', requestOptions)
       .then(res => res.json())
-      .then(json => console.log(json));
-      
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          setSearchingRecipes(false);
-          resolve(recipesList);
-        }, 1000);
-      })
-      .then((data) => {
-        setRecipes(data)
+      .then(json => {
+        console.log(json);
+        setSearchingRecipes(false);
+        setRecipes(json)
       })
       .catch((error) => {
         //Handle API error

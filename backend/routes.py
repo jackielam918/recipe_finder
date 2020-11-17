@@ -31,6 +31,9 @@ def search_ingredients():
 
 @app.route('/api/get-recipes', methods=['POST'])
 def get_recipes():
+    with open('/home/DVA_project/backend/recipesList.json') as f:
+        d = json.load(f)
+        return jsonify(d)
     data = request.get_json()
     scale = data['scale']
     ingredients = data['ingredients']
