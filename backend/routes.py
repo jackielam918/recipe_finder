@@ -40,3 +40,11 @@ def get_recipes():
     limit = data.get('limit')
     return json.dumps(model.most_similar_recipe(recipe=ingredients, scale=scale, limit=limit))
 
+
+@app.route('/api/substitute-ingredients', methods=['POST'])
+def get_substitute_ingredients():
+    data = request.get_json()
+    ingredients = data['ingredients']
+    recipe = data['recipe']
+    return json.dumps(model.get_substitute_ingredients(ingredients, recipe))
+
