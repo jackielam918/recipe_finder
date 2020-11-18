@@ -105,8 +105,6 @@ class Recipe(Base):
     saturatedfatpdv = Column(Float(53))
     carbspdv = Column(Float(53))
 
-    tags = relationship('Tag', secondary='recipetagjoin')
-
 
 class Tag(Base):
     __tablename__ = 'tags'

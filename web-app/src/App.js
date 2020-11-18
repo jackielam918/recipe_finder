@@ -8,9 +8,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import debounce from 'lodash.debounce';
 import RecipesGraph from './RecipesGraph.js'
 
-//Data
-import recipesList from './data/recipesList.json'
-
 function App(props) {
   const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
   const [searchingIngredients, setSearchingIngredients] = useState(false);
@@ -56,12 +53,13 @@ function App(props) {
       // Fetch Recipe results and initiate visualization
       console.log(selectedIngredients);
       console.log(sliderValue);
+      const ingredientids = selectedIngredients.map(c => c.id);
 
       setSearchingRecipes(true);
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scale: sliderValue, ingredients:  selectedIngredients.map(c => c.id), limit: 2})
+        body: JSON.stringify({ scale: sliderValue, ingredients:  ingredientids, limit: 2})
       };
 
       fetch('/api/get-recipes', requestOptions)
@@ -69,13 +67,13 @@ function App(props) {
       .then(json => {
         console.log(json);
         setSearchingRecipes(false);
+        json.map(c => c["selected_ingredients"] = ingredientids);
         setRecipes(json)
       })
       .catch((error) => {
         //Handle API error
       });
     }
-    
   }
 
   return (
