@@ -6,7 +6,7 @@ from modeling.ingredient_embedder import IngredientEmbedderWrapper
 import numpy as np
 import sys
 
-model_path = '/home/DVA_project/backend/modeling/outputs/11411120'
+model_path = '/home/backend/modeling/outputs/11411120'
 model = IngredientEmbedderWrapper(model_path)
 
 
@@ -31,7 +31,7 @@ def search_ingredients():
 
 @app.route('/api/get-recipes', methods=['POST'])
 def get_recipes():
-    with open('/home/DVA_project/backend/recipesList.json') as f:
+    with open('/home/backend/recipesList.json') as f:
         d = json.load(f)
         return jsonify(d)
     data = request.get_json()
@@ -47,10 +47,12 @@ def get_substitute_ingredients():
     ingredients = data['ingredients']
     recipe = data['recipe']
     recipeid = data['recipeid']
-    with open('/home/DVA_project/backend/substitutions.json') as f:
+    with open('/home/backend/substitutions.json') as f:
         d = json.load(f)
         return jsonify(d)
     #subs = model.get_substitute_ingredients(ingredients, recipe) 
     #instructions = Recipe.query.filter(Recipe.recipeid == f'{recipeid}').first().stepslist
     return json.dumps({instructions: instructions, substitutions: subs})
 
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)
