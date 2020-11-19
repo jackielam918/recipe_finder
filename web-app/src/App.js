@@ -59,7 +59,7 @@ function App(props) {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scale: sliderValue, ingredients:  ingredientids, limit: 2})
+        body: JSON.stringify({ scale: sliderValue, ingredients:  ingredientids, limit: 20})
       };
 
       fetch('/api/get-recipes', requestOptions)
