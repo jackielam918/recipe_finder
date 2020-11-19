@@ -7,6 +7,7 @@ from data_munging.data_prep import DataHandler
 import os
 import sys
 
+
 class IngredientEmbedderWrapper:
     def __init__(self, directory):
         self.directory = directory

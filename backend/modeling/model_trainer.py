@@ -59,7 +59,7 @@ class IngredientEmbedder:
         return torch.min(weighted_x, torch.ones_like(weighted_x))
 
     def compute_loss(self, y_true, y_pred):
-        return self.weighted_mse_loss(y_true=torch.log(y_true),
+        return self.weighted_mse_loss(y_true=torch.log(1+y_true),
                                       y_pred=y_pred,
                                       weight=self.weighting_function(x=y_true)).to(self.device)
 

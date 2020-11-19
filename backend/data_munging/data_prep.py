@@ -24,7 +24,7 @@ class DataHandler:
         self.ingredient_mapper = None
         self.unique_values = None
 
-    def create_batches(self, batch_size):
+    def create_batches(self, batch_size, negative_sample_ratio=0.3):
         """
         generates batches for training model
 
@@ -35,7 +35,15 @@ class DataHandler:
             raise NotImplementedError('Must create co-occurrence matrix first')
 
         row, col = self.co_occurrence_matrix.nonzero()
-        total_size = self.co_occurrence_matrix.nnz
+        non_zero_size = self.co_occurrence_matrix.nnz
+
+        negative_sample_size = int(np.floor((negative_sample_ratio / (1 - negative_sample_ratio)) * non_zero_size))
+        zero_row, zero_col = shuffle(*np.where(self.co_occurrence_matrix.todense() == 0))
+
+        row = np.concatenate((row, zero_row[:negative_sample_size]))
+        col = np.concatenate((col, zero_col[:negative_sample_size]))
+
+        total_size = non_zero_size + negative_sample_size
         row_rand, col_rand = shuffle(row, col)
 
         for idx in trange(0, total_size, batch_size):
@@ -55,7 +63,7 @@ class DataHandler:
 
         n = self.ingredient_mapper.ingredient_count
         a = np.zeros((n, n))
-
+        print('creating co-occurrence matrix')
         for recipe in corpus:
             ingredient_idxs = self.ingredient_mapper.recipe_to_idxs(recipe)
             permutes = list(permutations(ingredient_idxs, 2))
@@ -83,11 +91,16 @@ class DataHandler:
             user=os.environ['DBUSER'],
             password=os.environ['DBPASS']
         )
-        with open(os.path.join(parent_path, 'sql/load_full_recipe_data.sql'), 'r') as query:
-            corpus = pd.read_sql(query.read(), conn)
+        print('loading corpus...')
+        if full_data is True:
+            with open(os.path.join(parent_path, 'sql/load_full_recipe_data.sql'), 'r') as query:
+                corpus = pd.read_sql(query.read(), conn)
+        else:
+            with open(os.path.join(parent_path, 'sql/load_recipes.sql'), 'r') as query:
+                corpus = pd.read_sql(query.read(), conn)
+                corpus = corpus['recipe']
         conn.close()
-        if full_data is False:
-            corpus = corpus['recipe']
+        print('corpus loaded')
         return corpus
 
 
