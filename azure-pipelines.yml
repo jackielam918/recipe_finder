@@ -95,10 +95,10 @@ stages:
                 echo $PWD
                 echo PWD:
                 pwd
-                ls -la antenv
                 which python
                 which flask
                 pip freeze
+                ls -l /antenv; ls -l /antenv/lib; which python; pip freeze; which pip; ls -la $PYTHONPATH;
 
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App : pamplemousse'
