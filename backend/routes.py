@@ -1,4 +1,4 @@
-from models import Ingredient
+from models import Ingredient, Recipe
 from app import app
 from flask import request, jsonify
 import json
@@ -43,5 +43,11 @@ def get_substitute_ingredients():
     data = request.get_json()
     ingredients = data['ingredients']
     recipe = data['recipe']
-    return json.dumps(model.get_substitute_ingredients(ingredients, recipe))
+    recipeid = data['recipeid']
+    with open('/home/DVA_project/backend/substitutions.json') as f:
+        d = json.load(f)
+        return jsonify(d)
+    #subs = model.get_substitute_ingredients(ingredients, recipe) 
+    #instructions = Recipe.query.filter(Recipe.recipeid == f'{recipeid}').first().stepslist
+    return json.dumps({instructions: instructions, substitutions: subs})
 
