@@ -5,7 +5,7 @@ import json
 from modeling.ingredient_embedder import IngredientEmbedderWrapper
 import sys
 
-model_path = '/home/DVA_Project/backend/modeling/outputs/18411120'
+model_path = '/home/app/backend/modeling/outputs/18411120'
 model = IngredientEmbedderWrapper(model_path)
 
 
