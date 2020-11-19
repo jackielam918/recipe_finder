@@ -42,8 +42,8 @@ stages:
         curl -sL https://deb.nodesource.com/setup_15.x | bash -
         apt-get install -y nodejs
 
-        python -m venv .venv
-        source .venv/bin/activate
+        python -m venv antenv
+        source antenv/bin/activate
 
         python -m pip install --upgrade pip
         pip install setup
