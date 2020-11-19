@@ -6,7 +6,7 @@ from modeling.ingredient_embedder import IngredientEmbedderWrapper
 import numpy as np
 import sys
 
-model_path = '/home/DVA_project/backend/modeling/outputs/18411120'
+model_path = '/home/DVA_Project/backend/modeling/outputs/18411120'
 model = IngredientEmbedderWrapper(model_path)
 
 
@@ -32,22 +32,18 @@ def search_ingredients():
 @app.route('/api/get-recipes', methods=['POST'])
 def get_recipes():
     data = request.get_json()
+    print(data, file=sys.stderr)
     scale = data['scale']
     ingredients = data['ingredients']
     limit = data.get('limit')
     return json.dumps(model.most_similar_recipe(recipe=ingredients, scale=scale, limit=limit))
 
 
-@app.route('/api/substitute-ingredients', methods=['POST'])
-def get_substitute_ingredients():
-    data = request.get_json()
-    ingredients = data['ingredients']
-    recipe = data['recipe']
-    recipeid = data['recipeid']
-    with open('/home/DVA_project/backend/substitutions.json') as f:
-        d = json.load(f)
-        return jsonify(d)
-    #subs = model.get_substitute_ingredients(ingredients, recipe) 
-    #instructions = Recipe.query.filter(Recipe.recipeid == f'{recipeid}').first().stepslist
-    return json.dumps({instructions: instructions, substitutions: subs})
+# @app.route('/api/substitute-ingredients', methods=['POST'])
+# def get_substitute_ingredients():
+#     data = request.get_json()
+#     ingredients = data['ingredients']
+#     recipe = data['recipe']
+#     subs = model.get_substitute_ingredients(ingredients, recipe)
+#     return json.dumps({'substitutions': subs})
 
