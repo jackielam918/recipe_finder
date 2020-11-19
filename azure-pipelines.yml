@@ -39,13 +39,22 @@ stages:
       displayName: 'Use Python $(pythonVersion)'
 
     - script: |
-        python -m venv antenv
-        source antenv/bin/activate
+        # curl -sL https://deb.nodesource.com/setup_15.x | bash -
+        # apt-get install -y nodejs
 
+        python -m venv antenv
+        source antenv/Scripts/activate
+        ls -la antenv/bin
+        ls -la antenv/Scripts
+        ls -la antenv
         python -m pip install --upgrade pip
         pip install setup
         pip install -r environment/requirements.txt
         pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+        pip list
+        # cd web-app
+        # npm install && npm run build
+        # cd ..
       workingDirectory: $(projectRoot)
       displayName: "Install requirements"
 
@@ -87,4 +96,3 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'flask run -p 80'
