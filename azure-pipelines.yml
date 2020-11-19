@@ -39,8 +39,8 @@ stages:
       displayName: 'Use Python $(pythonVersion)'
 
     - script: |
-        curl -sL https://deb.nodesource.com/setup_15.x | bash -
-        apt-get install -y nodejs
+#        curl -sL https://deb.nodesource.com/setup_15.x | bash -
+#        apt-get install -y nodejs
 
         python -m venv antenv
         source antenv/bin/activate
@@ -50,9 +50,9 @@ stages:
         pip install -r environment/requirements.txt
         pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 
-        cd web-app
-        npm install && npm run build
-        cd ..
+#        cd web-app
+#        npm install && npm run build
+#        cd ..
       workingDirectory: $(projectRoot)
       displayName: "Install requirements"
 
