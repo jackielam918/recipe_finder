@@ -1,9 +1,8 @@
-from models import Ingredient, Recipe
+from models import Ingredient
 from app import app
-from flask import request, jsonify
+from flask import request
 import json
 from modeling.ingredient_embedder import IngredientEmbedderWrapper
-import numpy as np
 import sys
 
 model_path = '/home/DVA_Project/backend/modeling/outputs/18411120'
@@ -39,11 +38,4 @@ def get_recipes():
     return json.dumps(model.most_similar_recipe(recipe=ingredients, scale=scale, limit=limit))
 
 
-# @app.route('/api/substitute-ingredients', methods=['POST'])
-# def get_substitute_ingredients():
-#     data = request.get_json()
-#     ingredients = data['ingredients']
-#     recipe = data['recipe']
-#     subs = model.get_substitute_ingredients(ingredients, recipe)
-#     return json.dumps({'substitutions': subs})
 

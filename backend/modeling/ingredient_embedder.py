@@ -93,8 +93,7 @@ class IngredientEmbedderWrapper:
             raise ValueError(f'invalid method {method}, must be either "id" or "name"')
 
     def most_similar_recipe(self, recipe, scale, limit=20):
-        if scale > 1:
-            scale /= 100
+        scale /= 100
         tmp_df = self.recipe_embeddings.copy()
         recipe_embedding = self.query_recipe(recipe)
         scores = cosine_similarity(recipe_embedding.reshape(1, -1),
@@ -103,16 +102,19 @@ class IngredientEmbedderWrapper:
         filtered_recipes = tmp_df.loc[tmp_df['similarity'] >= scale]
         filtered_recipes_limit = filtered_recipes.sort_values('similarity', ascending=False).head(min(limit, 50))
 
+        if len(filtered_recipes_limit) == 0:
+            return []
+
         embeddings_limit = np.vstack(filtered_recipes_limit['recipe_embeddings'])
         recipe_ids = filtered_recipes_limit['recipeid'].values
 
         recipe_sims = cosine_similarity(embeddings_limit, embeddings_limit)
-        recipe_sims_mask = recipe_sims > 0.9
+        recipe_sims_mask = recipe_sims > 0.8
         similar_recipe_ids = [recipe_ids[mask].tolist() for mask in recipe_sims_mask]
         filtered_recipes_limit['similar_recipe_ids'] = similar_recipe_ids
 
         filtered_recipes_limit['recipe_difference'] = filtered_recipes_limit.loc[:, 'recipe'].apply(
-            lambda x: list(set(x) ^ set(recipe)))
+            lambda x: list(set(x) - set(recipe)))
 
         filtered_recipes_limit['recipe_difference'] = filtered_recipes_limit['recipe_difference'].apply(
             lambda x: [self.ingredient_mapper.id_to_name[i] for i in x]
@@ -121,32 +123,16 @@ class IngredientEmbedderWrapper:
         filtered_recipes_limit['ingredient_list'] = filtered_recipes_limit['recipe'].apply(
             lambda x: [self.ingredient_mapper.id_to_name[i] for i in x])
 
-        columns = ['recipeid', 'name', 'minutes', 'ingredient_list', 'recipe', 'similarity', 'similar_recipe_ids',
-                   'recipe_difference', 'stepslist']
+        filtered_recipes_limit['recipe_difference_ids'] = filtered_recipes_limit['recipe_difference'].apply(
+            lambda x: [self.ingredient_mapper.name_to_id[i] for i in x]
+        )
+        filtered_recipes_limit.rename(columns={'recipe': 'ingredient_list_ids'}, inplace=True)
+
+        columns = ['recipeid', 'name', 'minutes', 'ingredient_list', 'ingredient_list_ids', 'similarity',
+                   'similar_recipe_ids', 'recipe_difference', 'recipe_difference_ids', 'stepslist']
+
         ret_dict = filtered_recipes_limit.loc[:, columns].head(limit).to_dict('recipeid')
         return ret_dict
-
-    # def get_substitute_ingredients(self, ingredients, recipe):
-    #     missing_input_ingredients, missing_recipe_ingredients = self.get_missing_ingredients(ingredients, recipe)
-    #     if len(missing_input_ingredients) == 0 or len(missing_recipe_ingredients) == 0:
-    #         ret = []
-    #     else:
-    #         ingredient_embeddings = np.vstack([self.query_ingredient_by_id(i) for i in missing_input_ingredients])
-    #         recipe_ingredient_embeddings = np.vstack([self.query_ingredient_by_id(i) for i in missing_recipe_ingredients])
-    #         similarities = cosine_similarity(ingredient_embeddings, recipe_ingredient_embeddings)
-    #         ret = []
-    #         for idx, row in enumerate(similarities):
-    #             if np.max(row) > 0.6:
-    #                 ingredient_id = missing_input_ingredients[idx]
-    #                 missing_ingredient_id = missing_recipe_ingredients[np.argmax(row)]
-    #                 ret.append({"name": self.ingredient_mapper.id_to_name[ingredient_id],
-    #                             "substituted_for": self.ingredient_mapper.id_to_name[missing_ingredient_id]})
-    #             else:
-    #                 ret.append({"name": self.ingredient_mapper.id_to_name[ing], "substituted_for": ""})
-    #     non_missing_ingredients = set(recipe) - set(missing_recipe_ingredients)
-    #     for ingredient in non_missing_ingredients:
-    #         ret.append({"name": self.ingredient_mapper.id_to_name[ingredient], "substituted_for": ""})
-    #     return ret
 
     @staticmethod
     def get_missing_ingredients(ingredients, recipe):
