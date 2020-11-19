@@ -106,4 +106,4 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'ls -l /antenv; ls -l /antenv/lib; which python; pip freeze; which pip; ls -la $PYTHONPATH; flask run -p 90'
+              startUpCommand: 'ls -l /antenv; ls -l /antenv/lib; which python; pip freeze; which pip; ls -la $PYTHONPATH; flask run -p 8000'
