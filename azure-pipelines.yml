@@ -106,3 +106,4 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+              startUpCommand: 'ls -l antenv; which python; flask run -p 90'
