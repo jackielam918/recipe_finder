@@ -114,31 +114,31 @@ function RecipesGraph({ width, height, recipes }) {
                                     body: JSON.stringify({ recipe: d.ingredient_list, ingredients: d.selected_ingredients, recipeid: d.recipeid})
                                   };
                             
-                                fetch('/api/substitute-ingredients', requestOptions)
-                                .then(res => res.json())
-                                .then(json => {
-                                    var ingredient_html = "<div class=\"recipeDetailsRow\"> <ul>";
-                                    json.subs.forEach(ingredient => {
-                                        ingredient_html += "<li>" + ingredient.name;
-                                        if (ingredient.substituted_for){
-                                            ingredient_html += " (substituted for " + ingredient.substituted_for + ")";
-                                        }
-                                        ingredient_html += "</li>";
-                                    })
-                                    ingredient_html += "</ul> </div>";
-                                    var element = document.getElementById("ingredients");
-                                    element.removeAttribute("class");
-                                    element.innerHTML = ingredient_html;
+                                // fetch('/api/substitute-ingredients', requestOptions)
+                                // .then(res => res.json())
+                                // .then(json => {
+                                //     var ingredient_html = "<div class=\"recipeDetailsRow\"> <ul>";
+                                //     json.subs.forEach(ingredient => {
+                                //         ingredient_html += "<li>" + ingredient.name;
+                                //         if (ingredient.substituted_for){
+                                //             ingredient_html += " (substituted for " + ingredient.substituted_for + ")";
+                                //         }
+                                //         ingredient_html += "</li>";
+                                //     })
+                                //     ingredient_html += "</ul> </div>";
+                                //     var element = document.getElementById("ingredients");
+                                //     element.removeAttribute("class");
+                                //     element.innerHTML = ingredient_html;
                                     
-                                    var instructions_html = "<div class=\"recipeDetailsRow\"> <ul>";
-                                    json.instructions.forEach(ins => {
-                                        instructions_html += "<li>" + ins + "</li>";
-                                    })
-                                    instructions_html += "</ul> </div>";
-                                    var element = document.getElementById("instructions");
-                                    element.removeAttribute("class");
-                                    element.innerHTML = instructions_html;
-                                })
+                                //     var instructions_html = "<div class=\"recipeDetailsRow\"> <ul>";
+                                //     json.instructions.forEach(ins => {
+                                //         instructions_html += "<li>" + ins + "</li>";
+                                //     })
+                                //     instructions_html += "</ul> </div>";
+                                //     var element = document.getElementById("instructions");
+                                //     element.removeAttribute("class");
+                                //     element.innerHTML = instructions_html;
+                                // })
                                 var html = "";
                                 html += "<div class=\"recipeDetailsTitle\"> <p class=\"recipeDetailsLabel\">" + d.name + "</p> </div>"; 
                                 html += "<div class=\"recipeDetailsContent\">";
@@ -151,20 +151,20 @@ function RecipesGraph({ width, height, recipes }) {
                                 html += "</div> </div>";
 
                                 html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Ingredients:</p> </div>";
-                                html += "<div id=\"ingredients\" class=\"loader\"></div>"
-                                // html += "<div class=\"recipeDetailsRow\"> <ul>";
-                                // d.ingredient_list.forEach(ingredient => {
-                                //     html += "<li class=\"apples\">" + ingredient + "</li>";
-                                // })
-                                //html += "</ul> </div>";
+                                //html += "<div id=\"ingredients\" class=\"loader\"></div>"
+                                html += "<div class=\"recipeDetailsRow\"> <ul>";
+                                d.ingredient_list.forEach(ingredient => {
+                                    html += "<li>" + ingredient + "</li>";
+                                })
+                                html += "</ul> </div>";
 
                                 html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Instructions:</p> </div>";
-                                html += "<div id=\"instructions\" class=\"loader\"></div>"
-                                //html += "<div class=\"recipeDetailsRow\"> <ul>";
-                                // d.instructions.forEach(instruction => {
-                                //     html += "<li>" + instruction + "</li>";
-                                // })
-                                //html += "</ul> </div>";
+                                //html += "<div id=\"instructions\" class=\"loader\"></div>"
+                                html += "<div class=\"recipeDetailsRow\"> <ol>";
+                                d.stepslist.forEach(instruction => {
+                                    html += "<li>" + instruction + "</li>";
+                                })
+                                html += "</ol> </div>";
 
                                 html += "</div>";
                                 return html;
