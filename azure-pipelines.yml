@@ -89,6 +89,17 @@ stages:
               versionSpec: '$(pythonVersion)'
             displayName: 'Use Python version'
 
+          - task: CmdLine@2
+            inputs:
+              script: |
+                echo $PWD
+                echo PWD:
+                pwd
+                ls -la antenv
+                which python
+                which flask
+                pip freeze
+
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App : pamplemousse'
             inputs:
