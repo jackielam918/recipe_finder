@@ -3,19 +3,22 @@ from sqlalchemy import ARRAY, BigInteger, Boolean, Column, Date, Float, ForeignK
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import OID
 from sqlalchemy.ext.declarative import declarative_base
+from dataclasses import dataclass
 from app import db
+
 
 Base = db.Model
 metadata = Base.metadata
 
 
-class Cleaningredient(Base):
-    __tablename__ = 'cleaningredients'
+@dataclass
+class Ingredient(Base):
+    __tablename__ = 'ingredients'
 
-    cleaningredientid = Column(Integer, primary_key=True)
+    ingredientid = Column(Integer, primary_key=True)
     name = Column(String(255))
 
-    recipes = relationship('Recipe', secondary='recipeingredientjoin')
+    #recipes = relationship('Recipe', secondary='recipeingredientjoin')
 
 
 t_pg_buffercache = Table(
@@ -101,8 +104,6 @@ class Recipe(Base):
     proteinpdv = Column(Float(53))
     saturatedfatpdv = Column(Float(53))
     carbspdv = Column(Float(53))
-
-    tags = relationship('Tag', secondary='recipetagjoin')
 
 
 class Tag(Base):

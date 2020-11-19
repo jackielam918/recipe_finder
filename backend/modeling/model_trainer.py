@@ -18,6 +18,7 @@ class IngredientEmbedder:
         self.data_handler = data_handler
         self.ingredient_mapper = data_handler.ingredient_mapper
         self.losses = []
+        self.directory = None
         self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     def fit(self, batch_size=1024, epochs=5, lr=0.05, save=True):
@@ -58,7 +59,7 @@ class IngredientEmbedder:
         return torch.min(weighted_x, torch.ones_like(weighted_x))
 
     def compute_loss(self, y_true, y_pred):
-        return self.weighted_mse_loss(y_true=torch.log(y_true),
+        return self.weighted_mse_loss(y_true=torch.log(1+y_true),
                                       y_pred=y_pred,
                                       weight=self.weighting_function(x=y_true)).to(self.device)
 
@@ -79,11 +80,11 @@ class IngredientEmbedder:
         saves all files to load model and perform inference
         :return:
         """
-        directory = os.path.join(os.path.abspath('./outputs'), time.strftime("%d%S%m%y"))
-        os.makedirs(directory)
-        self.save_model(directory)
-        self.save_ingredient_mapper(directory)
-        self.save_embeddings(directory)
+        self.directory = os.path.join(os.path.abspath('outputs'), time.strftime("%d%S%m%y"))
+        os.makedirs(self.directory)
+        self.save_model(self.directory)
+        self.save_ingredient_mapper(self.directory)
+        self.save_embeddings(self.directory)
 
     def save_model(self, directory):
         state_dict_path = os.path.join(directory, 'model_state_dict')

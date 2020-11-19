@@ -1,0 +1,30 @@
+version: '3.2'
+
+services:
+  backend:
+    container_name: flask-app
+    image: "pamplemousse-backend"
+    volumes:
+      - "../..:/home/DVA_project"
+    env_file:
+      - ./.env
+    environment:
+      - FLASK_APP=/home/DVA_project/backend/routes.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    ports:
+      - "5000:5000"
+    command:
+      flask run
+  # frontend:
+    # container_name: react-app
+    # image: "pamplemousse-frontend"
+    # ports:
+      # - "3000:3000"
+    # volumes:
+      # - "../../web-app:/home/web-app"
+    # command:
+      # npm start
+    # depends_on:
+      # - backend

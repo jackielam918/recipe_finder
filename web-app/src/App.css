@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 40px;
+  width: 1200px;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+.finder {
+  display: flex;
+  flex-direction: row;
+}
+
+.search {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin-right: 20px;
+}
+
+.search > * {
+  margin-bottom: 30px;
+}
+
+.slider {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+
+.sliderLabel {
+  font-size: 20px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.sliderLimitLabel {
+  font-size: 16px;
+}
