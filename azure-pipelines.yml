@@ -49,7 +49,8 @@ stages:
         pip install setup
         pip install -r environment/requirements.txt
         pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
-
+        
+        pwd
         npm install && npm run build
       workingDirectory: $(projectRoot)
       displayName: "Install requirements"
