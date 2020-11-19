@@ -93,4 +93,4 @@ stages:
             inputs:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(webAppName)
-              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip(.venv)
+              package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
