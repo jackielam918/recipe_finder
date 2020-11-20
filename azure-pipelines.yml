@@ -11,13 +11,13 @@ variables:
   azureServiceConnectionId: '3c60c81b-e31d-46ce-b5f4-710c21edf888'
 
   # Web app name
-  webAppName: 'dva-recipe'
+  webAppName: 'pamplemousse'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
   # Environment name
-  environmentName: 'dva-recipe'
+  environmentName: 'pamplemousse'
 
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
@@ -88,9 +88,30 @@ stages:
               versionSpec: '$(pythonVersion)'
             displayName: 'Use Python version'
 
+          # - task: CmdLine@2
+          #   inputs:
+          #     script: |
+          #       # python -m venv antenv
+          #       # source antenv/bin/activate
+
+          #       # python -m pip install --upgrade pip
+          #       # pip install setup
+          #       # pip install -r environment/requirements.txt
+          #       # pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+          #       echo $VIRTUAL_ENV
+          #       echo $PWD
+          #       echo PWD:
+          #       pwd
+          #       which python
+          #       which flask
+          #       pip freeze
+          #       ls -l /antenv; ls -l /antenv/lib; which python; pip freeze; which pip; ls -la $PYTHONPATH;
+
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App : pamplemousse'
             inputs:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+              # startUpCommand: 'python -m venv antenv; source antenv/bin/activate; python -m pip install --upgrade pip; pip install setup; pip install -r environment/requirements.txt; pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html; . antenv/bin/activate; flask run -p 8000'
+              # startUpCommand: 'pwd; ls -la; which python; which pip; flask run -p 80'
