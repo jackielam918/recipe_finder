@@ -113,4 +113,4 @@ stages:
               azureSubscription: $(azureServiceConnectionId)
               appName: $(webAppName)
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-              startUpCommand: 'pwd; ls -la; ls -la antenv; ls -la antenv/bin; ls -la antenv; pwd; ls -l /antenv; ls -l /antenv/lib/python3.7; which python; pip freeze; which pip; ls -la $PYTHONPATH; . /antenv/bin/activate; flask run -p 8000'
+              startUpCommand: 'tar -xzf antenv.tar.gz; ls -la antenv; ls -la antenv/bin; ls -l /antenv/lib/python3.7; ls -l antenv/lib/python3.7/site-packages; . antenv/bin/activate; flask run -p 8000'
