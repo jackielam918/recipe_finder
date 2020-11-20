@@ -1,8 +1,6 @@
 import './RecipesGraph.css';
 
 import { useEffect, useRef } from 'react';
-// import * as d3 from 'd3';
-// import d3tip from 'd3-tip';
 
 import * as d3module from 'd3'
 import d3tip from 'd3-tip'
@@ -23,6 +21,7 @@ function RecipesGraph({ width, height, recipes }) {
     const createGraph = () => {
 
         var svg = d3.select(svgRef.current);
+        d3.select(".recipeDetails").remove()
         svg.selectAll("*").remove();
         svg.attr("width", width)
             .attr("height", height);
@@ -46,19 +45,18 @@ function RecipesGraph({ width, height, recipes }) {
         var linksDict = {}
         var maxDegree = 0;
         var minDegree = 1000;
-        var maxSubstitutions = 0;
+        var maxMissing = 0;
 
         recipes = recipes.map(recipe => {
-            var numberOfSimilarRecipes = 0;
-            recipe["numberOfSimilarRecipes"] = numberOfSimilarRecipes = recipe["similar_recipe_ids"].length;
+            const similarity = recipe["similarity"];
             recipe["difficulty"] = recipe["minutes"] < 30 ? "Easy" : recipe["minutes"] < 90 ? "Medium" : "Hard";
-            recipe["numberOfSubstitutions"] = recipe["recipe_difference"].length;
-            if (maxDegree < numberOfSimilarRecipes) {
-                maxDegree = numberOfSimilarRecipes;
+            recipe["numberOfMissing"] = recipe["recipe_difference"].length;
+            if (maxDegree < similarity) {
+                maxDegree = similarity;
             }
 
-            if (minDegree > numberOfSimilarRecipes) {
-                minDegree = numberOfSimilarRecipes;
+            if (minDegree > similarity) {
+                minDegree = similarity;
             }
 
             if (!linksDict[recipe["recipeid"]]) {
@@ -76,8 +74,8 @@ function RecipesGraph({ width, height, recipes }) {
                     }
             });
 
-            if (maxSubstitutions < recipe["recipe_difference"].length) {
-                maxSubstitutions = recipe["recipe_difference"].length;
+            if (maxMissing < recipe["numberOfMissing"]) {
+                maxMissing = recipe["numberOfMissing"];
             }
 
             return recipe;
@@ -85,10 +83,10 @@ function RecipesGraph({ width, height, recipes }) {
 
         var nodeSizeScale = d3.scaleLinear()
                                 .domain([minDegree, maxDegree])
-                                .range([15, 40]);
+                                .range([10, 30]);
 
-        var substitutionScale = d3.scaleLinear()
-                                    .domain([0, maxSubstitutions])
+        var missingScale = d3.scaleLinear()
+                                    .domain([0, maxMissing])
                                     .range(["#fed976", "#bd0026"]);
         
         var difficultyColors = {
@@ -97,10 +95,6 @@ function RecipesGraph({ width, height, recipes }) {
             "Hard": "#045a8d",
         }
 
-        var svg = d3.select(svgRef.current)
-            .attr("width", width)
-            .attr("height", height)
-        
         var g = svg.append("g");
 
         var tooltip = d3.tip()
@@ -108,12 +102,12 @@ function RecipesGraph({ width, height, recipes }) {
                             .direction('s')
                             .html(function(d) { 
 
-                                const requestOptions = {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ recipe: d.ingredient_list, ingredients: d.selected_ingredients, recipeid: d.recipeid})
-                                  };
-                            
+                                // const requestOptions = {
+                                //     method: 'POST',
+                                //     headers: { 'Content-Type': 'application/json' },
+                                //     body: JSON.stringify({ recipe: d.ingredient_list, ingredients: d.selected_ingredients, recipeid: d.recipeid})
+                                // };
+
                                 // fetch('/api/substitute-ingredients', requestOptions)
                                 // .then(res => res.json())
                                 // .then(json => {
@@ -140,21 +134,30 @@ function RecipesGraph({ width, height, recipes }) {
                                 //     element.innerHTML = instructions_html;
                                 // })
                                 var html = "";
-                                html += "<div class=\"recipeDetailsTitle\"> <p class=\"recipeDetailsLabel\">" + d.name + "</p> </div>"; 
+                                html += "<div class=\"recipeDetailsTitle\">"; 
+                                html += "<p class=\"recipeDetailsLabel\">" + d.name + "</p>";
+                                html += "<div class='closeButtonContainer' onclick=\"(function () {var toolTip = document.getElementsByClassName('recipeDetails')[0]; toolTip.style['opacity'] = 0; toolTip.style['pointer-events'] = 'none';})();return false;\"><svg xmlns='http://www.w3.org/2000/svg' width='21px' height='21px'><g><line stroke='white' stroke-width='2px' x1='0' y1='0' x2='21' y2='21'></line><line stroke='white' stroke-width='2px' x1='21' y1='0' x2='0' y2='21'></line></g></svg></div>"
+                                html += "</div>";
+                                
                                 html += "<div class=\"recipeDetailsContent\">";
                                 
                                 html += "<div class=\"recipeDetailsRow\"> <div class=\"recipeDetailsDifSubs\">";
                                 html += "<svg width=\"20\" height=\"20\"><circle r=\"10\" fill=\"" + difficultyColors[d.difficulty] + "\" cx=\"10\" cy=\"10\"></circle></svg>"
                                 html += "<p>" + d.difficulty + "</p>"
-                                html += "<svg width=\"25\" height=\"20\"><circle class=\"recipeNode\" r=\"7.5\" fill=\"white\" stroke=\"" + substitutionScale(d.numberOfSubstitutions) + "\" cx=\"15\" cy=\"10\"></circle></svg>"
-                                html += "<p>" + d.numberOfSubstitutions.toString() + " substitution" + (d.numberOfSubstitutions > 1 ? "s" : "") + "</p>"
+                                html += "<svg width=\"25\" height=\"20\"><circle class=\"recipeNode\" r=\"7.5\" fill=\"white\" stroke=\"" + missingScale(d.numberOfMissing) + "\" cx=\"15\" cy=\"10\"></circle></svg>"
+                                html += "<p>" + d.numberOfMissing.toString() + " missing ingredient" + (d.numberOfMissing > 1 ? "s" : "") + "</p>"
                                 html += "</div> </div>";
 
                                 html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Ingredients:</p> </div>";
                                 //html += "<div id=\"ingredients\" class=\"loader\"></div>"
                                 html += "<div class=\"recipeDetailsRow\"> <ul>";
-                                d.ingredient_list.forEach(ingredient => {
-                                    html += "<li>" + ingredient + "</li>";
+                                const recipe_difference_ids = new Set(d.recipe_difference_ids);
+                                d.ingredient_list.forEach((ingredient, index) => {
+                                    if (recipe_difference_ids.has(d.ingredient_list_ids[index])){
+                                        html += "<li class=\"missingIngredient\">" + ingredient + "</li>";
+                                    } else {
+                                        html += "<li>" + ingredient + "</li>";
+                                    }
                                 })
                                 html += "</ul> </div>";
 
@@ -165,8 +168,8 @@ function RecipesGraph({ width, height, recipes }) {
                                     html += "<li>" + instruction + "</li>";
                                 })
                                 html += "</ol> </div>";
-
                                 html += "</div>";
+
                                 return html;
                             });
 
@@ -176,7 +179,7 @@ function RecipesGraph({ width, height, recipes }) {
             .nodes(recipes)
             .force("link", d3.forceLink(links).id(d => d.recipeid).distance(125))
             .force('center', d3.forceCenter((width - margin.right) / 2, height / 2))
-            .force("charge", d3.forceManyBody().strength(-500))
+            .force("charge", d3.forceManyBody().strength(-1000))
             .force("x", d3.forceX())
             .force("y", d3.forceY())
             .alphaTarget(1)
@@ -194,14 +197,14 @@ function RecipesGraph({ width, height, recipes }) {
             .enter().append("g")
             .attr("class", "node")
             .on("click", function(event, d) {
-                if (d.istooltipshowing){
-                    tooltip.hide(d, this);
-                    d.istooltipshowing = false
-                } else {
-                    tooltip.show(d, this);
-                    d.istooltipshowing = true
-                } 
-
+                tooltip.show(d, this);
+                // if (d.istooltipshowing){
+                //     tooltip.hide(d, this);
+                //     d.istooltipshowing = false
+                // } else {
+                //     tooltip.show(d, this);
+                //     d.istooltipshowing = true
+                // } 
             })
             .call(d3.drag()
                 .on("start", dragstarted)
@@ -210,19 +213,19 @@ function RecipesGraph({ width, height, recipes }) {
         
         node.append("circle")
                 .attr("class", "recipeOuterCircle")
-                .attr("r", d => (nodeSizeScale(d.numberOfSimilarRecipes) + 3))
+                .attr("r", d => (nodeSizeScale(d.similarity) + 3))
         
         node.append("circle")
                 .attr("class", "recipeNode")
-                .attr("r", d => nodeSizeScale(d.numberOfSimilarRecipes))
+                .attr("r", d => nodeSizeScale(d.similarity))
                 .attr("fill", d => difficultyColors[d.difficulty])
-                .attr("stroke", d => substitutionScale(d.numberOfSubstitutions));
+                .attr("stroke", d => missingScale(d.numberOfMissing));
         
         node.append("text")
                 .text(d => d.name)
                 .attr("class", "recipeName")
-                .attr("x", d => (Math.sqrt(Math.pow(nodeSizeScale(d.numberOfSimilarRecipes), 2) / 2) + 3))
-                .attr("y", d => -(Math.sqrt(Math.pow(nodeSizeScale(d.numberOfSimilarRecipes), 2) / 2) + 3));
+                .attr("x", d => (Math.sqrt(Math.pow(nodeSizeScale(d.similarity), 2) / 2) + 3))
+                .attr("y", d => -(Math.sqrt(Math.pow(nodeSizeScale(d.similarity), 2) / 2) + 3));
 
         var legend = svg.append("g")
                             .attr("transform", "translate(" + (width - margin.right) + ", 0)");
@@ -234,7 +237,8 @@ function RecipesGraph({ width, height, recipes }) {
 
         var y = 0;
         var difficultyLevels = Object.keys(difficultyColors);
-        for (var i = 0; i < 3; i++) {
+        var i = 0;
+        for (i = 0; i < 3; i++) {
             y = i * 20 + 20;
 
             legend.append("circle")
@@ -250,18 +254,18 @@ function RecipesGraph({ width, height, recipes }) {
                     .attr("y", y);
         }
         
-        for (var i = 0; i <= maxSubstitutions; i++) {
+        for (i = 0; i <= maxMissing; i++) {
             y = (i + 3) * 20 + 30;
 
             legend.append("circle")
                     .attr("class", "legendRecipeNode")
                     .attr("r", 5)
-                    .attr("stroke", substitutionScale(i))
+                    .attr("stroke", missingScale(i))
                     .attr("cx", 15)
                     .attr("cy", y)
 
             legend.append("text")
-                    .text(i + " subs.")
+                    .text(i + " miss.")
                     .attr("class", "legendText")
                     .attr("x", 25)
                     .attr("y", y)
@@ -300,8 +304,18 @@ function RecipesGraph({ width, height, recipes }) {
         
         function dragended(event) {
             if (!event.active) force.alphaTarget(0);
-            event.subject.fx = null;
-            event.subject.fy = null;
+            // event.subject.fx = null;
+            // event.subject.fy = null;
+
+            event.subject.fixed = true;
+            if (event.subject.fixed == true) {
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+            else {
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
         }
 
         var zoom_handler = d3.zoom()

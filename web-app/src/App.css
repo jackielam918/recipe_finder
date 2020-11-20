@@ -42,3 +42,11 @@ h1 {
 .sliderLimitLabel {
   font-size: 16px;
 }
+
+.valueDisplay {
+  padding-bottom: 50px;
+}
+
+.alert {
+  margin-bottom: 30px;
+}
