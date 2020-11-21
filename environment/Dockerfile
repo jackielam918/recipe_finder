@@ -10,10 +10,8 @@ RUN pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f htt
 
 ENV DBHOST=dva-pamplemousse.postgres.database.azure.com
 ENV DBNAME=recipesdb
-ENV DBUSER=pamplemousse@dva-pamplemousse
-ENV DBPASS=#edc4rfV
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=1
+ENV DBUSER=recipeapp@dva-pamplemousse
+ENV DBPASS=findther3c1pes
 ENV FLASK_APP=/home/app/backend/routes.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
