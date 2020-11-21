@@ -2,8 +2,6 @@ import torch
 import torch.nn as nn
 from torch.nn.init import xavier_normal_
 
-# https://stackoverflow.com/questions/48962171/how-to-train-glove-algorithm-on-my-own-corpus\
-
 
 class IngredientEmbeddingModel(nn.Module):
     def __init__(self, input_dim, output_dim):
@@ -20,10 +18,6 @@ class IngredientEmbeddingModel(nn.Module):
         self.bj = nn.Embedding(input_dim, 1)
 
         # initialize random values
-        # self.wi.weight.data.uniform_(-1, 1)
-        # self.wj.weight.data.uniform_(-1, 1)
-        # self.bi.weight.data.zero_()
-        # self.bj.weight.data.zero_()
         self.wi.weight = xavier_normal_(self.wi.weight)
         self.wj.weight = xavier_normal_(self.wj.weight)
         self.bi.weight.data.zero_()
