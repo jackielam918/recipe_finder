@@ -3,7 +3,6 @@ from app import app
 from flask import request
 import json
 from modeling.ingredient_embedder import IngredientEmbedderWrapper
-import sys
 
 model_path = '/home/app/backend/modeling/outputs/19321120'
 model = IngredientEmbedderWrapper(model_path)
@@ -31,7 +30,6 @@ def search_ingredients():
 @app.route('/api/get-recipes', methods=['POST'])
 def get_recipes():
     data = request.get_json()
-    print(data, file=sys.stderr)
     scale = data['scale']
     ingredients = data['ingredients']
     limit = data.get('limit')
