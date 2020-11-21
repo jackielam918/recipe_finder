@@ -4,25 +4,31 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-var ingredientsList = [];
-fetch("/api/get-ingredients", {method:'GET', mode: "no-cors", headers : { 
-  'Content-Type': 'application/json;charset=UTF-8',
-  'Accept': 'application/json'
-  }})
-.then(res => res.json())
-.then(jsonData => {
-  ingredientsList = jsonData;
-  console.log(jsonData);
-  ReactDOM.render(
-    <React.StrictMode>
-      <App ingredients={ingredientsList}/>
-    </React.StrictMode>,
-    document.getElementById('root')
-  );
-})
-.catch(err => {
-  console.log(err);
-});
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+// var ingredientsList = [];
+// fetch("/api/get-ingredients", {method:'GET', mode: "no-cors", headers : { 
+//   'Content-Type': 'application/json;charset=UTF-8',
+//   'Accept': 'application/json'
+//   }})
+// .then(res => res.json())
+// .then(jsonData => {
+//   ingredientsList = jsonData;
+//   ReactDOM.render(
+//     <React.StrictMode>
+//       <App ingredients={ingredientsList}/>
+//     </React.StrictMode>,
+//     document.getElementById('root')
+//   );
+// })
+// .catch(err => {
+//   console.log(err);
+// });
 
 
 
