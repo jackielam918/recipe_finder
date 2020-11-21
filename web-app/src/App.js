@@ -31,7 +31,7 @@ function App(props) {
     }})
     .then(res => res.json())
     .then(jsonData => {
-      setIngredients(jsonData);
+      setIngredients(jsonData.sort((i1, i2) => i1.name.length - i2.name.length));
       setDisabledForm(false);
       setLoading(false);
     })
