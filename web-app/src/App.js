@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import { TextField, Chip, Slider, Button, CircularProgress, Backdrop } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
@@ -9,7 +9,6 @@ import RecipesGraph from './RecipesGraph.js'
 
 function App(props) {
   const [ingredients, setIngredients] = useState([]);
-  const [ingredientSuggestions, setIngredientSuggestions] = useState([]);
   const [ingredientInputError, setIngredientInputError] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [discoveryScale, setDiscoveryScale] = useState(50);
@@ -42,14 +41,6 @@ function App(props) {
     });
   };
 
-  const handleDiscoveryScaleChange = (event, newDiscoveryScale) => {
-    setDiscoveryScale(newDiscoveryScale);
-  };
-
-  const handleLimitScaleChange = (event, newLimitScale) => {
-    setLimitScale(newLimitScale);
-  };
-
   const useStyles = makeStyles((theme) => ({
     backdrop: {
       zIndex: theme.zIndex.drawer + 1,
@@ -57,34 +48,15 @@ function App(props) {
     }
   }));
 
-  const searchIngredients = useCallback(function(typedValue) {
-      if (typedValue) {
-        var filteredIngredients = ingredients.filter((ingredient) => ingredient.name.toLowerCase().includes(typedValue));
-        setIngredientSuggestions(filteredIngredients);
-      } 
-    }, 
-    []
-  )
-
-  const handleIngredientTyping = (event) => {
-    setIngredientSuggestions([]);
-    setIngredientInputError("");
-    searchIngredients(event.target.value);
-  }
-
   const searchRecipes = () => {
     setSearchError(false);
     if (selectedIngredients.length < 3) {
       setIngredientInputError("Please enter at least three ingredients.")
     } else {
       // Fetch Recipe results and initiate visualization
-      console.log(selectedIngredients);
-      console.log(discoveryScale);
-      console.log(limitScale)
-      
+      setLoading(true);
       const ingredientids = selectedIngredients.map(c => c.id);
 
-      setLoading(true);
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,17 +66,16 @@ function App(props) {
       fetch('/api/get-recipes', requestOptions)
       .then(res => res.json())
       .then(json => {
-        // json.map(c => c["selected_ingredients"] = ingredientids);
         setRecipes(json);
         setLoading(false);
-        if (json.length == 0) {
+        if (json.length === 0) {
           setSearchErrorText("No recipes matched the search criteria. Please update your criteria and try again!");
           setSearchError(true);
         }
       })
       .catch((error) => {
-        setLoading(false);
         setRecipes([]);
+        setLoading(false);
         setSearchErrorText("An error occurred while searcing for recipes. Please try again!");
         setSearchError(true);
       });
@@ -116,6 +87,7 @@ function App(props) {
       <Backdrop className={useStyles().backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
+
       <h1>Recipe Finder</h1>
 
       <div className="finder">
@@ -148,6 +120,7 @@ function App(props) {
             noOptionsText="No ingredients matched."
 
             onChange={(event, newSelectedIngredients) => {
+              setIngredientInputError("");
               setSelectedIngredients(newSelectedIngredients);
             }}
             
@@ -156,7 +129,7 @@ function App(props) {
                 {...params} 
                 label="Available Ingredients" 
                 variant="outlined" 
-                onChange={handleIngredientTyping}
+                onChange={() => setIngredientInputError("")}
                 error={ingredientInputError.length > 0}
                 helperText={ingredientInputError}
               />
@@ -180,7 +153,7 @@ function App(props) {
               value={discoveryScale} 
               min={0}
               max={100}
-              onChange={handleDiscoveryScaleChange} />
+              onChange={(e, value) => setDiscoveryScale(value)} />
             <p className="sliderLimitLabel">Experiment</p>
           </div>
 
@@ -192,7 +165,7 @@ function App(props) {
               min={5}
               max={50}
               valueLabelDisplay="on"
-              onChange={handleLimitScaleChange} />
+              onChange={(e, value) => setLimitScale(value)} />
           </div>
 
           <Button 

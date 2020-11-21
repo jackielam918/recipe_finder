@@ -16,6 +16,7 @@ function RecipesGraph({ width, height, recipes }) {
 
     useEffect(() => {
         createGraph();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [recipes]);
 
     const createGraph = () => {
@@ -26,7 +27,7 @@ function RecipesGraph({ width, height, recipes }) {
         svg.attr("width", width)
             .attr("height", height);
 
-        if (recipes.length == 0) {
+        if (recipes.length === 0) {
             svg.append("rect")
                 .attr("width", "100%")
                 .attr("height", "100%")
@@ -95,6 +96,7 @@ function RecipesGraph({ width, height, recipes }) {
             "Hard": "#045a8d",
         }
 
+        //Force-directed Graph
         var g = svg.append("g");
 
         var tooltip = d3.tip()
@@ -102,37 +104,6 @@ function RecipesGraph({ width, height, recipes }) {
                             .direction('s')
                             .html(function(d) { 
 
-                                // const requestOptions = {
-                                //     method: 'POST',
-                                //     headers: { 'Content-Type': 'application/json' },
-                                //     body: JSON.stringify({ recipe: d.ingredient_list, ingredients: d.selected_ingredients, recipeid: d.recipeid})
-                                // };
-
-                                // fetch('/api/substitute-ingredients', requestOptions)
-                                // .then(res => res.json())
-                                // .then(json => {
-                                //     var ingredient_html = "<div class=\"recipeDetailsRow\"> <ul>";
-                                //     json.subs.forEach(ingredient => {
-                                //         ingredient_html += "<li>" + ingredient.name;
-                                //         if (ingredient.substituted_for){
-                                //             ingredient_html += " (substituted for " + ingredient.substituted_for + ")";
-                                //         }
-                                //         ingredient_html += "</li>";
-                                //     })
-                                //     ingredient_html += "</ul> </div>";
-                                //     var element = document.getElementById("ingredients");
-                                //     element.removeAttribute("class");
-                                //     element.innerHTML = ingredient_html;
-                                    
-                                //     var instructions_html = "<div class=\"recipeDetailsRow\"> <ul>";
-                                //     json.instructions.forEach(ins => {
-                                //         instructions_html += "<li>" + ins + "</li>";
-                                //     })
-                                //     instructions_html += "</ul> </div>";
-                                //     var element = document.getElementById("instructions");
-                                //     element.removeAttribute("class");
-                                //     element.innerHTML = instructions_html;
-                                // })
                                 var html = "";
                                 html += "<div class=\"recipeDetailsTitle\">"; 
                                 html += "<p class=\"recipeDetailsLabel\">" + d.name + "</p>";
@@ -140,7 +111,6 @@ function RecipesGraph({ width, height, recipes }) {
                                 html += "</div>";
                                 
                                 html += "<div class=\"recipeDetailsContent\">";
-                                
                                 html += "<div class=\"recipeDetailsRow\"> <div class=\"recipeDetailsDifSubs\">";
                                 html += "<svg width=\"20\" height=\"20\"><circle r=\"10\" fill=\"" + difficultyColors[d.difficulty] + "\" cx=\"10\" cy=\"10\"></circle></svg>"
                                 html += "<p>" + d.difficulty + "</p>"
@@ -149,7 +119,6 @@ function RecipesGraph({ width, height, recipes }) {
                                 html += "</div> </div>";
 
                                 html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Ingredients:</p> </div>";
-                                //html += "<div id=\"ingredients\" class=\"loader\"></div>"
                                 html += "<div class=\"recipeDetailsRow\"> <ul>";
                                 const recipe_difference_ids = new Set(d.recipe_difference_ids);
                                 d.ingredient_list.forEach((ingredient, index) => {
@@ -162,7 +131,7 @@ function RecipesGraph({ width, height, recipes }) {
                                 html += "</ul> </div>";
 
                                 html += "<div class=\"recipeDetailsRow\"> <p class=\"recipeDetailsLabel\">Instructions:</p> </div>";
-                                //html += "<div id=\"instructions\" class=\"loader\"></div>"
+
                                 html += "<div class=\"recipeDetailsRow\"> <ol>";
                                 d.stepslist.forEach(instruction => {
                                     html += "<li>" + instruction + "</li>";
@@ -175,6 +144,15 @@ function RecipesGraph({ width, height, recipes }) {
 
         g.call(tooltip);
 
+        const tick = () => {
+            node.attr("transform", d => "translate(" + d.x + "," + d.y + ")");
+
+            link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+        }
+
         var force = d3.forceSimulation()
             .nodes(recipes)
             .force("link", d3.forceLink(links).id(d => d.recipeid).distance(125))
@@ -183,8 +161,7 @@ function RecipesGraph({ width, height, recipes }) {
             .force("x", d3.forceX())
             .force("y", d3.forceY())
             .alphaTarget(1)
-            .on("tick", tick)
-            
+            .on("tick", tick);
 
         var link = g.selectAll(".links")
             .data(links)
@@ -192,19 +169,37 @@ function RecipesGraph({ width, height, recipes }) {
             .append("line")
             .attr("class", "links");
 
+        const dragstarted = (event) => {
+            if (!event.active) force.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+
+        const dragged = (event) => {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+        
+        const dragended = (event) => {
+            if (!event.active) force.alphaTarget(0);
+
+            event.subject.fixed = true;
+            if (event.subject.fixed === true) {
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+            else {
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
+        }
+
         var node = g.selectAll(".node")
             .data(force.nodes())
             .enter().append("g")
             .attr("class", "node")
             .on("click", function(event, d) {
                 tooltip.show(d, this);
-                // if (d.istooltipshowing){
-                //     tooltip.hide(d, this);
-                //     d.istooltipshowing = false
-                // } else {
-                //     tooltip.show(d, this);
-                //     d.istooltipshowing = true
-                // } 
             })
             .call(d3.drag()
                 .on("start", dragstarted)
@@ -213,7 +208,7 @@ function RecipesGraph({ width, height, recipes }) {
         
         node.append("circle")
                 .attr("class", "recipeOuterCircle")
-                .attr("r", d => (nodeSizeScale(d.similarity) + 3))
+                .attr("r", d => (nodeSizeScale(d.similarity) + 3));
         
         node.append("circle")
                 .attr("class", "recipeNode")
@@ -226,18 +221,19 @@ function RecipesGraph({ width, height, recipes }) {
                 .attr("class", "recipeName")
                 .attr("x", d => (Math.sqrt(Math.pow(nodeSizeScale(d.similarity), 2) / 2) + 3))
                 .attr("y", d => -(Math.sqrt(Math.pow(nodeSizeScale(d.similarity), 2) / 2) + 3));
-
+        
+        //Graph Legend
         var legend = svg.append("g")
                             .attr("transform", "translate(" + (width - margin.right) + ", 0)");
         
         var legendBackground = legend.append("rect")
-                .attr("width", margin.right)
-                .attr("height", 0)
-                .attr("fill", "white");
+                                        .attr("width", margin.right)
+                                        .attr("height", 0)
+                                        .attr("fill", "white");
 
-        var y = 0;
+        var i = 0, y = 0;
         var difficultyLevels = Object.keys(difficultyColors);
-        var i = 0;
+        
         for (i = 0; i < 3; i++) {
             y = i * 20 + 20;
 
@@ -279,53 +275,16 @@ function RecipesGraph({ width, height, recipes }) {
                 .attr("y1", 14)
                 .attr("y2", y + 7)
                 .attr("class", "legendLine")
-        
-        function tick() {
-            
-            node.attr("transform", d => "translate(" + d.x + "," + d.y + ")");
 
-            link.attr("x1", d => d.source.x)
-                .attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
-        
-        }
-    
-        function dragstarted(event) {
-            if (!event.active) force.alphaTarget(0.3).restart();
-            event.subject.fx = event.subject.x;
-            event.subject.fy = event.subject.y;
-        }
-        
-        function dragged(event) {
-            event.subject.fx = event.x;
-            event.subject.fy = event.y;
-        }
-        
-        function dragended(event) {
-            if (!event.active) force.alphaTarget(0);
-            // event.subject.fx = null;
-            // event.subject.fy = null;
-
-            event.subject.fixed = true;
-            if (event.subject.fixed == true) {
-                event.subject.fx = event.subject.x;
-                event.subject.fy = event.subject.y;
-            }
-            else {
-                event.subject.fx = null;
-                event.subject.fy = null;
-            }
-        }
-
-        var zoom_handler = d3.zoom()
-            .on("zoom", zoom_actions);
-
-        zoom_handler(svg);     
-
-        function zoom_actions(event){
+        //Zoom and Move the Graph
+        const zoom_actions = (event) => {
             g.attr("transform", event.transform)
         }
+
+        const zoom_handler = d3.zoom()
+                                .on("zoom", zoom_actions);
+
+        zoom_handler(svg); 
 
     }
 
