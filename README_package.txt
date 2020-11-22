@@ -63,7 +63,7 @@ Available workflows include the following:
 3. Search results appear in the graph view. The legend explains the colors,
    and shapes.
     a. Each recipe node is colored based on difficulty of recipe for a casual
-cook
+       cook
     b. Each recipe node has a border indicating the number of recipes that
        the system substituted
     c. The size of the recipe node indicates the closest match to your
@@ -98,7 +98,7 @@ Follow these:
     f. sudo apt update
     g. sudo apt -y install docker-ce
     h. For more details, please visit:
-            https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+       https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
 
 2. Pull the docker image for the app
     a. Open a terminal and run the following commands:
