@@ -178,7 +178,9 @@ function App(props) {
               Find Recipes
           </Button>
         </div>
-        <RecipesGraph width={880} height={600} recipes={recipes}/>
+        <div className="graphContainer">
+            <RecipesGraph recipes={recipes}/>
+        </div>
       </div>
     </div>
   );

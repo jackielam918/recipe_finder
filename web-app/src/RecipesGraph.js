@@ -10,7 +10,7 @@ const d3 = {
 }
 
 
-function RecipesGraph({ width, height, recipes }) {
+function RecipesGraph({ recipes }) {
     const svgRef = useRef();
     const margin = {top: 0, right: 80, bottom: 0, left: 0};
 
@@ -24,6 +24,11 @@ function RecipesGraph({ width, height, recipes }) {
         var svg = d3.select(svgRef.current);
         d3.select(".recipeDetails").remove()
         svg.selectAll("*").remove();
+
+        var parentRect = svg.node().parentElement.getBoundingClientRect();
+        var width = parentRect.width;
+        var height = parentRect.height;
+
         svg.attr("width", width)
             .attr("height", height);
 
