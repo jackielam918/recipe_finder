@@ -9,6 +9,7 @@ easily find recipes for ingredients that they already possess, and are also
 willing to experiment with recipes to substitute any missing ingredients with
 alternatives from their own pantry.
 
+![User Interface](./frontend.png)
 
 ## Package Description
 
